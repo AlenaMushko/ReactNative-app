@@ -13,6 +13,8 @@ import {
   KeyboardAvoidingView,
   TouchableOpacity,
 } from "react-native";
+import AddUserIcon from "../assets/svg/addUserIcon";
+import { useNavigation } from "@react-navigation/native";
 
 const initialState = {
   login: "",
@@ -20,7 +22,7 @@ const initialState = {
   password: "",
 };
 
-const initialFocus = {
+const initialIsFocus = {
   login: false,
   email: false,
   password: false,
@@ -28,15 +30,15 @@ const initialFocus = {
 
 export default function RegistrationScreen() {
   const [state, setState] = useState(initialState);
-  const [isFocus, setIsFocus] = useState(initialFocus);
+  const [isFocus, setIsFocus] = useState(initialIsFocus);
   const [isShowPassword, setIsShowPassword] = useState(false);
-
+  const [isActive, setIsActive] = useState(false);
   const [fontsLoader] = useFonts({
     Roboto_Regular: require("../assets/fonts/Roboto-Regular.ttf"),
     Roboto_Medium: require("../assets/fonts/Roboto-Medium.ttf"),
     Roboto_Bold: require("../assets/fonts/Roboto-Bold.ttf"),
   });
-
+  const navigation = useNavigation();
   useEffect(() => {
     (async () =>
       await Font.loadAsync({
@@ -45,6 +47,27 @@ export default function RegistrationScreen() {
         Roboto_Bold: require("../assets/fonts/Roboto-Bold.ttf"),
       }))();
   }, []);
+
+  const handleFocus = (inputValue) => {
+    setIsActive(true);
+    setIsFocus((prevState) => ({ ...prevState, [inputValue]: true }));
+  };
+
+  const handleEndEditing = (inputValue) => {
+    setIsActive(false);
+    console.log("EndEditing", inputValue);
+    setIsFocus((prevState) => ({ ...prevState, [inputValue]: false }));
+  };
+
+  const keyboardHidden = () => {
+    setIsFocus(false); // margin стає на початкове значення
+    Keyboard.dismiss(); // ховається клавіатура
+    setState(initialState); // скидаємо форму
+  };
+
+  const handleGoToLogin = () => {
+    navigation.navigate("login");
+  };
 
   if (!fontsLoader) {
     return undefined;
@@ -56,40 +79,69 @@ export default function RegistrationScreen() {
           style={styles.imgBg}
           source={require("../assets/img/BGbgMountains.png")}
         >
-          <View style={styles.box}>
-            <View style={styles.userPhoto}>
-              <TouchableOpacity style={styles.addPhoto}><Text style={styles.add}>+</Text></TouchableOpacity>
-            </View>
-            <Text style={styles.title}>Registration</Text>
-            <View style={styles.form}>
-              <KeyboardAvoidingView
-                behavior={Platform.OS == "ios" ? "padding" : "height"}
-              >
+          <KeyboardAvoidingView
+            behavior={Platform.OS == "ios" ? "padding" : "height"}
+          >
+            <View
+              style={{ ...styles.box, paddingBottom: isActive ? 32 : 78 }}
+              onFocus={() => setIsFocus(true)}
+              onEndEditing={() => setIsFocus(false)}
+            >
+              {isActive === true ? (
+                <View style={styles.userPhoto}>
+                  <ImageBackground
+                    style={styles.imgBg}
+                    source={require("../assets/img/user.png")}
+                  >
+                    <AddUserIcon
+                      style={styles.addPhoto}
+                      fill={"#E8E8E8"}
+                      stroke={"#E8E8E8"}
+                    />
+                  </ImageBackground>
+                </View>
+              ) : (
+                <View style={styles.userPhoto}>
+                  <AddUserIcon
+                    style={styles.addPhoto}
+                    fill={"#FF6C00"}
+                    stroke={"#FF6C00"}
+                  />
+                </View>
+              )}
+
+              <Text style={styles.title}>Registration</Text>
+              <View style={styles.form}>
                 <TextInput
                   style={{
                     ...styles.input,
                     borderColor: isFocus.login ? "#FF6C00" : "#E8E8E8",
                   }}
+                  onFocus={() => handleFocus("login")}
+                  onEndEditing={() => handleEndEditing("login")}
                   onChangeText={(value) =>
-                    setState((prevState) => ({ ...prevState, login: value }))
+                    setState((prevState) => ({
+                      ...prevState,
+                      login: value.trim(),
+                    }))
                   }
                   value={state.login}
                   placeholder="login"
                   keyboardType="default"
-                  onFocus={() => setIsFocus(true)}
                 />
                 <TextInput
                   style={{
                     ...styles.input,
-                    borderColor: isFocus.password ? "#FF6C00" : "#E8E8E8",
+                    borderColor: isFocus.email ? "#FF6C00" : "#E8E8E8",
                   }}
+                  onFocus={() => handleFocus("email")}
+                  onEndEditing={() => handleEndEditing("email")}
                   onChangeText={(value) =>
                     setState((prevState) => ({ ...prevState, email: value }))
                   }
                   value={state.email}
                   placeholder="email address"
                   keyboardType="email-address"
-                  onFocus={() => setIsFocus(true)}
                 />
                 <View style={styles.inputPassword}>
                   <TextInput
@@ -97,6 +149,8 @@ export default function RegistrationScreen() {
                       ...styles.input,
                       borderColor: isFocus.password ? "#FF6C00" : "#E8E8E8",
                     }}
+                    onFocus={() => handleFocus("password")}
+                    onEndEditing={() => handleEndEditing("password")}
                     onChangeText={(value) =>
                       setState((prevState) => ({
                         ...prevState,
@@ -107,26 +161,40 @@ export default function RegistrationScreen() {
                     placeholder="password"
                     keyboardType="numeric"
                     secureTextEntry={!isShowPassword}
-                    onFocus={() => setIsFocus(true)}
                   />
-
-                  <Text
-                    style={styles.show}
-                    onPress={() => setIsShowPassword((prev) => !prev)}
-                  >
-                    show
-                  </Text>
+                  {isShowPassword === true ? (
+                    <Text
+                      style={styles.show}
+                      onPress={() => setIsShowPassword((prev) => !prev)}
+                    >
+                      Hide
+                    </Text>
+                  ) : (
+                    <Text
+                      style={styles.show}
+                      onPress={() => setIsShowPassword((prev) => !prev)}
+                    >
+                      Show
+                    </Text>
+                  )}
                 </View>
-                <TouchableOpacity
-                  style={styles.button}
-                  //  onPress={onPress}
-                >
-                  <Text style={styles.btnText}>Register</Text>
-                </TouchableOpacity>
-                <Text style={styles.inAccount}>Already have an account? Log in</Text>
-              </KeyboardAvoidingView>
+                {!isActive && (
+                  <View>
+                    <TouchableOpacity
+                      style={styles.button}
+                      activeOpacity
+                      onPress={keyboardHidden}
+                    >
+                      <Text style={styles.btnText}>Register</Text>
+                    </TouchableOpacity>
+                    <Text style={styles.inAccount} onPress={handleGoToLogin}>
+                      Already have an account? Log in
+                    </Text>
+                  </View>
+                )}
+              </View>
             </View>
-          </View>
+          </KeyboardAvoidingView>
         </ImageBackground>
       </View>
     </TouchableWithoutFeedback>
@@ -148,11 +216,15 @@ const styles = StyleSheet.create({
   box: {
     width: "100%",
     backgroundColor: "#FFFFFF",
-    height: 549,
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
     alignItems: "center",
-    position:"relative",
+    position: "relative",
+  },
+  addPhoto: {
+    position: "absolute",
+    right: -13,
+    bottom: 20,
   },
   title: {
     fontFamily: "Roboto_Medium",
@@ -173,11 +245,12 @@ const styles = StyleSheet.create({
     width: 343,
     padding: 10,
     borderWidth: 1,
-    // borderColor: "#E8E8E8",
     fontSize: 16,
     marginBottom: 10,
     borderRadius: 8,
     paddingLeft: 16,
+    borderColor: "#E8E8E8",
+    backgroundColor: "#F6F6F6",
   },
   inputPassword: {
     position: "relative",
@@ -200,30 +273,19 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 19,
   },
-  inAccount:{
-    color:"#1B4371",
+  inAccount: {
+    color: "#1B4371",
     fontSize: 16,
     lineHeight: 19,
-   textAlign: "center",
-   marginTop:16,
+    textAlign: "center",
+    marginTop: 16,
   },
-  userPhoto:{
-    position:"absolute",
-    width:120,
-    height:120,
-    backgroundColor:"#F6F6F6",
-    borderRadius:16,
-    top:-60,
+  userPhoto: {
+    position: "absolute",
+    width: 120,
+    height: 120,
+    backgroundColor: "#F6F6F6",
+    borderRadius: 16,
+    top: -60,
   },
-  addPhoto:{
-  
-    position:"absolute",
-    color:"#FF6C00",
-    width:25,
-    borderColor:"#FF6C00",
-    borderRadius:"50",
-    borderWidth:1,
-    right:-10,
-    bottom:10,
-  }
 });

@@ -1,7 +1,8 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-// import LoginScreen from "./Screens/LoginScreen";
+
 import RegistrationScreen from "./Screens/RegistrationScreen";
+import LoginScreen from "./Screens/LoginScreen";
 
 
 
@@ -15,7 +16,7 @@ export default function App() {
         screenOptions={{ headerShown: false }}
       >
         <AuthStack.Screen name="registration" component={RegistrationScreen} />
-        {/* <AuthStack.Screen name="login" component={LoginScreen} /> */}
+        <AuthStack.Screen name="login" component={LoginScreen} />
       </AuthStack.Navigator>
     </NavigationContainer>
   );
