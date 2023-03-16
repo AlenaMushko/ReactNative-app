@@ -1,13 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { useFonts } from "expo-font";
-import * as Font from "expo-font";
+import React, { useState } from "react";
 import {
   StyleSheet,
   Text,
   View,
   ImageBackground,
   TextInput,
-  TouchableWithoutFeedback,
   Keyboard,
   Platform,
   KeyboardAvoidingView,
@@ -45,7 +42,7 @@ export default function LoginScreen() {
   };
 console.log("isFocus.email", isFocus.email);
   const keyboardHidden = () => {
-    setIsFocus(false); // margin стає на початкове значення
+    setIsActive(false); // margin стає на початкове значення
     Keyboard.dismiss(); // ховається клавіатура
     setState(initialState); // скидаємо форму
   };
@@ -53,7 +50,7 @@ console.log("isFocus.email", isFocus.email);
   const handleGoToRegister = () => {
     navigation.navigate("registration");
   };
-  
+
   return (
     <Container>
         <ImageBackground
@@ -65,8 +62,6 @@ console.log("isFocus.email", isFocus.email);
           >
             <View
               style={{ ...styles.box, paddingBottom: isActive ? 32 : 132 }}
-              onFocus={() => setIsFocus(true)}
-              onEndEditing={() => setIsFocus(false)}
             >
               <Text style={styles.title}>Log In</Text>
               <View style={styles.form}>

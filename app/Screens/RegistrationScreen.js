@@ -6,11 +6,10 @@ import {
   ImageBackground,
   TextInput,
   Keyboard,
+  TouchableOpacity,
   Platform,
   KeyboardAvoidingView,
-  TouchableOpacity,
   ScrollView,
-  FlatList
 } from "react-native";
 import AddUserIcon from "../assets/svg/addUserIcon";
 import { useNavigation } from "@react-navigation/native";
@@ -34,7 +33,7 @@ export default function RegistrationScreen() {
   const [isShowPassword, setIsShowPassword] = useState(false);
   const [isActive, setIsActive] = useState(false);
   const navigation = useNavigation();
- 
+
   const handleFocus = (inputValue) => {
     setIsActive(true);
     setIsFocus((prevState) => ({ ...prevState, [inputValue]: true }));
@@ -57,19 +56,15 @@ export default function RegistrationScreen() {
   };
 
   return (
-   <Container>
-        <ImageBackground
-          style={styles.imgBg}
-          source={require("../assets/img/BGbgMountains.png")}
+    <Container>
+      <ImageBackground
+        style={styles.imgBg}
+        source={require("../assets/img/BGbgMountains.png")}
+      >
+        <KeyboardAvoidingView
+          behavior={Platform.OS == "ios" ? "padding" : "height"}
         >
-          <KeyboardAvoidingView
-            behavior={Platform.OS == "ios" ? "padding" : "height"}
-          >
-            <View
-              style={{ ...styles.box, paddingBottom: isActive ? 32 : 78 }}
-              onFocus={() => setIsFocus(true)}
-              onEndEditing={() => setIsFocus(false)}
-            >
+            <View style={{ ...styles.box, paddingBottom: isActive ? 32 : 78 }}>
               {isActive === true ? (
                 <View style={styles.userPhoto}>
                   <ImageBackground
@@ -177,9 +172,9 @@ export default function RegistrationScreen() {
                 )}
               </View>
             </View>
-          </KeyboardAvoidingView>
-        </ImageBackground>
-        </Container>
+        </KeyboardAvoidingView>
+      </ImageBackground>
+    </Container>
   );
 }
 

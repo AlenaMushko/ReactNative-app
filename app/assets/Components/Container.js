@@ -7,7 +7,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   Dimensions,
-  StyleSheet
+  StyleSheet,
 } from "react-native";
 
 export default function Container({ children }) {
@@ -17,7 +17,7 @@ export default function Container({ children }) {
     Roboto_Medium: require("../fonts/Roboto-Medium.ttf"),
     Roboto_Bold: require("../fonts/Roboto-Bold.ttf"),
   });
-  
+
   useEffect(() => {
     const screen = Dimensions.addEventListener("change", ({ window }) => {
       setDimensions(window.width);
