@@ -37,10 +37,8 @@ export default function LoginScreen() {
 
   const handleEndEditing = (inputValue) => {
     setIsActive(false);
-    console.log("EndEditing", inputValue);
     setIsFocus((prevState) => ({ ...prevState, [inputValue]: false }));
   };
-console.log("isFocus.email", isFocus.email);
   const keyboardHidden = () => {
     setIsActive(false); // margin стає на початкове значення
     Keyboard.dismiss(); // ховається клавіатура
