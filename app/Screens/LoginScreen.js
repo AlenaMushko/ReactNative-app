@@ -14,6 +14,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import Container from "../assets/Components/Container";
 
 const initialState = {
   email: "",
@@ -30,21 +31,7 @@ export default function LoginScreen() {
   const [isFocus, setIsFocus] = useState(initialIsFocus);
   const [isShowPassword, setIsShowPassword] = useState(false);
   const [isActive, setIsActive] = useState(false);
-  const [fontsLoader] = useFonts({
-    Roboto_Regular: require("../assets/fonts/Roboto-Regular.ttf"),
-    Roboto_Medium: require("../assets/fonts/Roboto-Medium.ttf"),
-    Roboto_Bold: require("../assets/fonts/Roboto-Bold.ttf"),
-  });
   const navigation = useNavigation();
-
-  useEffect(() => {
-    (async () =>
-      await Font.loadAsync({
-        Roboto_Regular: require("../assets/fonts/Roboto-Regular.ttf"),
-        Roboto_Medium: require("../assets/fonts/Roboto-Medium.ttf"),
-        Roboto_Bold: require("../assets/fonts/Roboto-Bold.ttf"),
-      }))();
-  }, []);
 
   const handleFocus = (inputValue) => {
     setIsActive(true);
@@ -56,7 +43,7 @@ export default function LoginScreen() {
     console.log("EndEditing", inputValue);
     setIsFocus((prevState) => ({ ...prevState, [inputValue]: false }));
   };
-
+console.log("isFocus.email", isFocus.email);
   const keyboardHidden = () => {
     setIsFocus(false); // margin стає на початкове значення
     Keyboard.dismiss(); // ховається клавіатура
@@ -66,13 +53,9 @@ export default function LoginScreen() {
   const handleGoToRegister = () => {
     navigation.navigate("registration");
   };
-
-  if (!fontsLoader) {
-    return undefined;
-  }
+  
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.container}>
+    <Container>
         <ImageBackground
           style={styles.imgBg}
           source={require("../assets/img/BGbgMountains.png")}
@@ -92,6 +75,7 @@ export default function LoginScreen() {
                     ...styles.input,
                     borderColor: isFocus.email ? "#FF6C00" : "#E8E8E8",
                   }}
+                  
                   onFocus={() => handleFocus("email")}
                   onEndEditing={() => handleEndEditing("email")}
                   onChangeText={(value) =>
@@ -155,17 +139,11 @@ export default function LoginScreen() {
             </View>
           </KeyboardAvoidingView>
         </ImageBackground>
-      </View>
-    </TouchableWithoutFeedback>
+     </Container>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    fontFamily: "Roboto_Regular",
-  },
   imgBg: {
     flex: 1,
     resizeMode: "contain",

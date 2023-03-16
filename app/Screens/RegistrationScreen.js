@@ -1,17 +1,16 @@
-import React, { useEffect, useState } from "react";
-import { useFonts } from "expo-font";
-import * as Font from "expo-font";
+import React, { useState } from "react";
 import {
   StyleSheet,
   Text,
   View,
   ImageBackground,
   TextInput,
-  TouchableWithoutFeedback,
   Keyboard,
   Platform,
   KeyboardAvoidingView,
   TouchableOpacity,
+  ScrollView,
+  FlatList
 } from "react-native";
 import AddUserIcon from "../assets/svg/addUserIcon";
 import { useNavigation } from "@react-navigation/native";
@@ -34,21 +33,8 @@ export default function RegistrationScreen() {
   const [isFocus, setIsFocus] = useState(initialIsFocus);
   const [isShowPassword, setIsShowPassword] = useState(false);
   const [isActive, setIsActive] = useState(false);
-  // const [fontsLoader] = useFonts({
-  //   Roboto_Regular: require("../assets/fonts/Roboto-Regular.ttf"),
-  //   Roboto_Medium: require("../assets/fonts/Roboto-Medium.ttf"),
-  //   Roboto_Bold: require("../assets/fonts/Roboto-Bold.ttf"),
-  // });
   const navigation = useNavigation();
-  // useEffect(() => {
-  //   (async () =>
-  //     await Font.loadAsync({
-  //       Roboto_Regular: require("../assets/fonts/Roboto-Regular.ttf"),
-  //       Roboto_Medium: require("../assets/fonts/Roboto-Medium.ttf"),
-  //       Roboto_Bold: require("../assets/fonts/Roboto-Bold.ttf"),
-  //     }))();
-  // }, []);
-
+ 
   const handleFocus = (inputValue) => {
     setIsActive(true);
     setIsFocus((prevState) => ({ ...prevState, [inputValue]: true }));
@@ -61,7 +47,7 @@ export default function RegistrationScreen() {
   };
 
   const keyboardHidden = () => {
-    setIsFocus(false); // margin стає на початкове значення
+    setIsActive(false); // margin стає на початкове значення
     Keyboard.dismiss(); // ховається клавіатура
     setState(initialState); // скидаємо форму
   };
@@ -70,13 +56,8 @@ export default function RegistrationScreen() {
     navigation.navigate("login");
   };
 
-  // if (!fontsLoader) {
-  //   return undefined;
-  // }
   return (
-    <Container>
-     {/* <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.container}>  */}
+   <Container>
         <ImageBackground
           style={styles.imgBg}
           source={require("../assets/img/BGbgMountains.png")}
@@ -198,18 +179,11 @@ export default function RegistrationScreen() {
             </View>
           </KeyboardAvoidingView>
         </ImageBackground>
-       {/* </View>
-    </TouchableWithoutFeedback>  */}
-     </Container>
+        </Container>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    fontFamily: "Roboto_Regular",
-  },
   imgBg: {
     flex: 1,
     resizeMode: "contain",

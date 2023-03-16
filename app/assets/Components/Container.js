@@ -1,14 +1,13 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useFonts } from "expo-font";
-import * as SplashScreen from 'expo-splash-screen';
+import * as SplashScreen from "expo-splash-screen";
 import * as Font from "expo-font";
 import {
-  StyleSheet,
   View,
   TouchableWithoutFeedback,
   Keyboard,
   Dimensions,
-  ScrollView,
+  StyleSheet
 } from "react-native";
 
 export default function Container({ children }) {
@@ -18,15 +17,7 @@ export default function Container({ children }) {
     Roboto_Medium: require("../fonts/Roboto-Medium.ttf"),
     Roboto_Bold: require("../fonts/Roboto-Bold.ttf"),
   });
-  useEffect(() => {
-    (async () =>
-      await Font.loadAsync({
-        Roboto_Regular: require("../fonts/Roboto-Regular.ttf"),
-        Roboto_Medium: require("../fonts/Roboto-Medium.ttf"),
-        Roboto_Bold: require("../fonts/Roboto-Bold.ttf"),
-      }))();
-  }, []);
-
+  
   useEffect(() => {
     const screen = Dimensions.addEventListener("change", ({ window }) => {
       setDimensions(window.width);
@@ -39,6 +30,15 @@ export default function Container({ children }) {
     }
   }, [fontsLoader]);
 
+  useEffect(() => {
+    (async () =>
+      await Font.loadAsync({
+        Roboto_Regular: require("../fonts/Roboto-Regular.ttf"),
+        Roboto_Medium: require("../fonts/Roboto-Medium.ttf"),
+        Roboto_Bold: require("../fonts/Roboto-Bold.ttf"),
+      }))();
+  }, []);
+
   if (!fontsLoader) {
     return undefined;
   }
@@ -48,7 +48,7 @@ export default function Container({ children }) {
         style={{ ...styles.container, width: dimensions }}
         onLayout={onLayoutRootView}
       >
-        <ScrollView>{children}</ScrollView>
+        {children}
       </View>
     </TouchableWithoutFeedback>
   );
