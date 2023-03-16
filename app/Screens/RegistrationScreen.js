@@ -15,6 +15,7 @@ import {
 } from "react-native";
 import AddUserIcon from "../assets/svg/addUserIcon";
 import { useNavigation } from "@react-navigation/native";
+import Container from "../assets/Components/Container";
 
 const initialState = {
   login: "",
@@ -33,20 +34,20 @@ export default function RegistrationScreen() {
   const [isFocus, setIsFocus] = useState(initialIsFocus);
   const [isShowPassword, setIsShowPassword] = useState(false);
   const [isActive, setIsActive] = useState(false);
-  const [fontsLoader] = useFonts({
-    Roboto_Regular: require("../assets/fonts/Roboto-Regular.ttf"),
-    Roboto_Medium: require("../assets/fonts/Roboto-Medium.ttf"),
-    Roboto_Bold: require("../assets/fonts/Roboto-Bold.ttf"),
-  });
+  // const [fontsLoader] = useFonts({
+  //   Roboto_Regular: require("../assets/fonts/Roboto-Regular.ttf"),
+  //   Roboto_Medium: require("../assets/fonts/Roboto-Medium.ttf"),
+  //   Roboto_Bold: require("../assets/fonts/Roboto-Bold.ttf"),
+  // });
   const navigation = useNavigation();
-  useEffect(() => {
-    (async () =>
-      await Font.loadAsync({
-        Roboto_Regular: require("../assets/fonts/Roboto-Regular.ttf"),
-        Roboto_Medium: require("../assets/fonts/Roboto-Medium.ttf"),
-        Roboto_Bold: require("../assets/fonts/Roboto-Bold.ttf"),
-      }))();
-  }, []);
+  // useEffect(() => {
+  //   (async () =>
+  //     await Font.loadAsync({
+  //       Roboto_Regular: require("../assets/fonts/Roboto-Regular.ttf"),
+  //       Roboto_Medium: require("../assets/fonts/Roboto-Medium.ttf"),
+  //       Roboto_Bold: require("../assets/fonts/Roboto-Bold.ttf"),
+  //     }))();
+  // }, []);
 
   const handleFocus = (inputValue) => {
     setIsActive(true);
@@ -69,12 +70,13 @@ export default function RegistrationScreen() {
     navigation.navigate("login");
   };
 
-  if (!fontsLoader) {
-    return undefined;
-  }
+  // if (!fontsLoader) {
+  //   return undefined;
+  // }
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.container}>
+    <Container>
+     {/* <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.container}>  */}
         <ImageBackground
           style={styles.imgBg}
           source={require("../assets/img/BGbgMountains.png")}
@@ -196,8 +198,9 @@ export default function RegistrationScreen() {
             </View>
           </KeyboardAvoidingView>
         </ImageBackground>
-      </View>
-    </TouchableWithoutFeedback>
+       {/* </View>
+    </TouchableWithoutFeedback>  */}
+     </Container>
   );
 }
 
