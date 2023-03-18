@@ -11,7 +11,7 @@ export const Button = ({ onSubmit, text }) => {
 
 const styles = StyleSheet.create({
   button: {
-    marginTop: 43,
+    marginTop: 30,
     backgroundColor: "#FF6C00",
     marginHorizontal: 16,
     padding: 16,
