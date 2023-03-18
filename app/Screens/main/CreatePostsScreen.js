@@ -39,12 +39,21 @@ export default function CreatePostsScreen() {
             placeholder="Name..."
             placeholderTextColor="#BDBDBD"
           />
-          <TextInput
-            style={{ ...styles.title, ...styles.input }}
-            keyboardType="default"
-            placeholder="Place..."
-            placeholderTextColor="#BDBDBD"
-          />
+
+          <View style={styles.location}>
+            <Image
+              style={styles.geolocation}
+              source={require("../../assets/img/geolocation.png")}
+            ></Image>
+
+            <TextInput
+              style={{ ...styles.title, ...styles.input, marginLeft: 18 }}
+              keyboardType="default"
+              placeholder="Place..."
+              placeholderTextColor="#BDBDBD"
+            />
+          </View>
+
           <Button
             //  onSubmit={handleSubmit}
             text="Publish"
@@ -130,5 +139,18 @@ const styles = StyleSheet.create({
     color: "#F6F6F6",
     width: 70,
     height: 40,
+  },
+  location: {
+    position: "relative",
+     height: 50,
+    borderBottomWidth: 1,
+    borderBottomColor: "#E8E8E8",
+  },
+  geolocation: {
+    position: "absolute",
+    left: 0,
+    bottom: 16,
+    width: 16,
+    height: 18,
   },
 });
