@@ -7,7 +7,7 @@ import Container from "../../Components/Container";
 export default function PostsScreen() {
   const navigation = useNavigation();
   const handleLogOut = () => {
-    navigation.navigate("registration");
+    navigation.navigate("login");
   };
   return (
     <Container>
