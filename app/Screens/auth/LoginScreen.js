@@ -8,10 +8,11 @@ import {
   Keyboard,
   Platform,
   KeyboardAvoidingView,
-  TouchableOpacity,
+  ToastAndroid
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Container from "../../Components/Container";
+import Button from "../../Components/Button";
 
 const initialState = {
   email: "",
@@ -39,16 +40,28 @@ export default function LoginScreen() {
     setIsActive(false);
     setIsFocus((prevState) => ({ ...prevState, [inputValue]: false }));
   };
-  const keyboardHidden = () => {
-    setIsActive(false); // margin стає на початкове значення
-    Keyboard.dismiss(); // ховається клавіатура
-    setState(initialState); // скидаємо форму
-  };
-
+ 
   const handleGoToRegister = () => {
     navigation.navigate("registration");
   };
 
+  const showToast = () => {
+    ToastAndroid.show('A pikachu appeared nearby !', ToastAndroid.SHORT,       ToastAndroid.CENTER,);
+  };
+
+  const handleSubmit = async () => {
+    const { email, password } = state;
+
+    if (!email || !password) {
+      showToast();
+      return;
+    }                                               //!
+    navigation.navigate('home'); 
+    setIsActive(false); // margin стає на початкове значення
+    Keyboard.dismiss(); // ховається клавіатура
+    setState(initialState); // скидаємо форму
+  };
+console.log((state));
   return (
     <Container>
         <ImageBackground
@@ -72,7 +85,7 @@ export default function LoginScreen() {
                   onFocus={() => handleFocus("email")}
                   onEndEditing={() => handleEndEditing("email")}
                   onChangeText={(value) =>
-                    setState((prevState) => ({ ...prevState, email: value }))
+                    setState((prevState) => ({ ...prevState, email: value.trim().toLowerCase() }))
                   }
                   value={state.email}
                   placeholder="email address"
@@ -116,13 +129,7 @@ export default function LoginScreen() {
 
                 {!isActive && (
                   <View>
-                    <TouchableOpacity
-                      style={styles.button}
-                      activeOpacity
-                      onPress={keyboardHidden}
-                    >
-                      <Text style={styles.btnText}>Log In</Text>
-                    </TouchableOpacity>
+                    <Button onSubmit={handleSubmit}  text="Log In" />
                     <Text style={styles.inAccount} onPress={handleGoToRegister}>
                       Don't have an account? Register
                     </Text>
