@@ -6,14 +6,13 @@ import {
   ImageBackground,
   TextInput,
   Keyboard,
-  TouchableOpacity,
   Platform,
   KeyboardAvoidingView,
-  ScrollView,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import AddUserIcon from "../../assets/svg/addUserIcon";
 import Container from "../../Components/Container";
+import Button from "../../Components/Button";
 
 const initialState = {
   login: "",
@@ -45,11 +44,19 @@ export default function RegistrationScreen() {
     setIsFocus((prevState) => ({ ...prevState, [inputValue]: false }));
   };
 
-  const keyboardHidden = () => {
+  const handleSubmit = async () => {
+    const {login, email, password } = state;
+
+    if (!login || !email || !password) {
+      showToast();
+      return;
+    }                                               //!
+    navigation.navigate('home'); 
     setIsActive(false); // margin стає на початкове значення
     Keyboard.dismiss(); // ховається клавіатура
     setState(initialState); // скидаємо форму
   };
+console.log((state));
 
   const handleGoToLogin = () => {
     navigation.navigate("login");
@@ -115,7 +122,7 @@ export default function RegistrationScreen() {
                   onFocus={() => handleFocus("email")}
                   onEndEditing={() => handleEndEditing("email")}
                   onChangeText={(value) =>
-                    setState((prevState) => ({ ...prevState, email: value }))
+                    setState((prevState) => ({ ...prevState, email: value.trim().toLowerCase() }))
                   }
                   value={state.email}
                   placeholder="email address"
@@ -158,13 +165,7 @@ export default function RegistrationScreen() {
                 </View>
                 {!isActive && (
                   <View>
-                    <TouchableOpacity
-                      style={styles.button}
-                      activeOpacity
-                      onPress={keyboardHidden}
-                    >
-                      <Text style={styles.btnText}>Register</Text>
-                    </TouchableOpacity>
+                    <Button onSubmit={handleSubmit}  text="Register" />
                     <Text style={styles.inAccount} onPress={handleGoToLogin}>
                       Already have an account? Log in
                     </Text>

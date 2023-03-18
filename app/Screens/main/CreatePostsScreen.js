@@ -17,9 +17,11 @@ export default function CreatePostsScreen() {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#fff",
-        fontFamily: "Roboto_Regular",
-      },
+  container: {
+      flex: 1,
+      backgroundColor: "#fff",
+      fontFamily: "Roboto_Regular",
+      alignItems: "center",
+      justifyContent:"center",
+    },
 });

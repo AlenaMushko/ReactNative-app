@@ -1,61 +1,46 @@
-import { createStackNavigator } from "@react-navigation/stack";
+import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import RegistrationScreen from "../auth/RegistrationScreen";
-import LoginScreen from "../auth/LoginScreen";
-import PostsScreen from "./PostsScreen";
-import CreatePostsScreen from "./CreatePostsScreen";
-import ProfileScreen from "./ProfileScreen";
+
+import PostsScreen from "../main/PostsScreen";
+import CreatePostsScreen from "../main/CreatePostsScreen";
+import ProfileScreen from "../main/ProfileScreen";
 import { Ionicons } from "@expo/vector-icons";
 
-
-const AuthStack = createStackNavigator();
 const MainTab = createBottomTabNavigator();
 
-const Home = (isAuth) => {
-  if (!isAuth) {
-    return (
-      <AuthStack.Navigator
-        initialRouteName="login"
-        screenOptions={{ headerShown: true }} // header щоб забрати
-      >
-        <AuthStack.Screen name="registration" component={RegistrationScreen} />
-        <AuthStack.Screen name="login" component={LoginScreen} />
-      </AuthStack.Navigator>
-    );
-  }
+const Home = () => {
   return (
     <MainTab.Navigator
-    screenOptions={({ route }) => ({
-      tabBarShowLabel: false,
-      tabBarIcon: ({ focused, color, size }) => {
-        let iconName;
+      screenOptions={({ route }) => ({
+        tabBarShowLabel: false,
+        headerShown: false,
+        tabBarActiveTintColor: "#efb810",
+        tabBarInactiveTintColor: "#BDBDBD",
+        tabBarStyle: [
+          {
+            display: "flex",
+          },
+          null,
+        ],
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName;
 
-        if (route.name === "Posts") {
-          iconName = focused
-            ? "apps-outline"
-            : "apps-outline";
-        } else if (route.name === "Create") {
-          iconName = focused ? "add-circle-outline" : "add-circle-outline";
-        } else if (route.name === "Profile") {
-          iconName = focused ? "happy-outline" : "happy-outline";
-        }
-        return <Ionicons name={iconName} size={size} color={color} />;
-      },
-    })}
-    tabBarOptions={{
-      activeTintColor: "#FF6C00",
-      inactiveTintColor: "rgba(33, 33, 33, 0.8)",
-    }}
+          if (route.name === "posts") {
+            iconName = focused ? "apps-outline" : "apps-outline";
+          } else if (route.name === "create") {
+            iconName = focused ? "add-circle-outline" : "add-circle-outline";
+          } else if (route.name === "profile") {
+            iconName = focused ? "happy-outline" : "happy-outline";
+          }
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
+      })}
     >
-      <MainTab.Screen name="Posts"  
-      
-      
-      
-     component={PostsScreen} />
-      <MainTab.Screen name="Create" component={CreatePostsScreen} />
-      <MainTab.Screen name="Profile" component={ProfileScreen} />
+      <MainTab.Screen name="posts" component={PostsScreen} />
+      <MainTab.Screen name="create" component={CreatePostsScreen} />
+      <MainTab.Screen name="profile" component={ProfileScreen} />
     </MainTab.Navigator>
   );
 };
-export default Home;
 
+export default Home;

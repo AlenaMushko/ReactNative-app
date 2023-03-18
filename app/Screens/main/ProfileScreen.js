@@ -20,5 +20,7 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: "#fff",
         fontFamily: "Roboto_Regular",
+        alignItems: "center",
+        justifyContent:"center",
       },
 });

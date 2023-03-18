@@ -1,9 +1,11 @@
-import { NavigationContainer } from "@react-navigation/native";
-import Home from "./Screens/main/Home";
-
+import { NavigationContainer} from "@react-navigation/native";
+import useRoute from "./rourer";
+ 
 
 export default function App() {
-  const routing = Home({});
+  const routing = useRoute(null);
 
   return <NavigationContainer>{routing}</NavigationContainer>;
 }
+
+
