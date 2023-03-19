@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, View, Image, TextInput } from "react-native";
+import { StyleSheet, Text, View, Image, TextInput, KeyboardAvoidingView } from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useNavigation } from "@react-navigation/native";
 import Button from "../../Components/Button";
@@ -8,64 +8,71 @@ import Container from "../../Components/Container";
 export default function CreatePostsScreen() {
   const navigation = useNavigation();
   const handleArrow = () => {
-    navigation.navigate("registration");
+    navigation.navigate("home");
   };
   return (
     <Container>
-      <View style={styles.header}>
-        <View style={styles.arrowBtn}>
-          <AntDesign.Button
-            name="arrowleft"
-            color={"#BDBDBD"}
-            backgroundColor={"transparent"}
-            header={20}
-            onPress={handleArrow}
-          />
-        </View>
-        <Text>CreatePostsScreen</Text>
-      </View>
-      <View style={styles.wraper}>
-        <View style={styles.boxPhoto}>
-          <Image
-            style={styles.addPhoto}
-            source={require("../../assets/img/addPhoto.png")}
-          ></Image>
-        </View>
-        <Text style={{ ...styles.title, marginTop: 8 }}>Download photo</Text>
-        <View style={styles.createPost}>
-          <TextInput
-            style={{ ...styles.title, ...styles.input }}
-            keyboardType="default"
-            placeholder="Name..."
-            placeholderTextColor="#BDBDBD"
-          />
-
-          <View style={styles.location}>
-            <Image
-              style={styles.geolocation}
-              source={require("../../assets/img/geolocation.png")}
-            ></Image>
-
-            <TextInput
-              style={{ ...styles.title, ...styles.input, marginLeft: 18 }}
-              keyboardType="default"
-              placeholder="Place..."
-              placeholderTextColor="#BDBDBD"
+     
+        <View style={styles.header}>
+          <View style={styles.arrowBtn}>
+            <AntDesign.Button
+              name="arrowleft"
+              size={24}
+              color={"#BDBDBD"}
+              backgroundColor={"transparent"}
+              header={20}
+              onPress={handleArrow}
             />
           </View>
-
-          <Button
-            //  onSubmit={handleSubmit}
-            text="Publish"
-          />
-          <View style={styles.deletePost}>
+          <Text>CreatePostsScreen</Text>
+        </View>
+        <View style={styles.wraper}>
+          <View style={styles.boxPhoto}>
             <Image
-              style={styles.delete}
-              source={require("../../assets/img/deletePost.png")}
+              style={styles.addPhoto}
+              source={require("../../assets/img/addPhoto.png")}
             ></Image>
           </View>
+          <Text style={{ ...styles.title, marginTop: 8 }}>Download photo</Text>
+          <KeyboardAvoidingView
+        behavior={Platform.OS == "ios" ? "padding" : "height"}
+      >
+          <View style={styles.createPost}>
+            <TextInput
+              style={{ ...styles.title, ...styles.input }}
+              keyboardType="default"
+              placeholder="Name..."
+              placeholderTextColor="#BDBDBD"
+            />
+
+            <View style={styles.location}>
+              <Image
+                style={styles.geolocation}
+                source={require("../../assets/img/geolocation.png")}
+              ></Image>
+
+              <TextInput
+                style={{ ...styles.title, ...styles.input, marginLeft: 18 }}
+                keyboardType="default"
+                placeholder="Place..."
+                placeholderTextColor="#BDBDBD"
+              />
+            </View>
+
+            <Button
+              //  onSubmit={handleSubmit}
+              text="Publish"
+            />
+            <View style={styles.deletePost}>
+              <Image
+                style={styles.delete}
+                source={require("../../assets/img/deletePost.png")}
+              ></Image>
+            </View>
+          </View>
+          </KeyboardAvoidingView>
         </View>
-      </View>
+      
     </Container>
   );
 }
@@ -142,7 +149,7 @@ const styles = StyleSheet.create({
   },
   location: {
     position: "relative",
-     height: 50,
+    height: 50,
     borderBottomWidth: 1,
     borderBottomColor: "#E8E8E8",
   },

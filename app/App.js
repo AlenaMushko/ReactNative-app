@@ -3,7 +3,7 @@ import useRoute from "./rourer";
  
 
 export default function App() {
-  const routing = useRoute({});
+  const routing = useRoute(null);
 
   return <NavigationContainer>{routing}</NavigationContainer>;
 }
