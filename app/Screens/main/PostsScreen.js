@@ -16,6 +16,7 @@ export default function PostsScreen() {
         <View style={styles.logoutBtn}>
           <AntDesign.Button
             name="logout"
+            size={24}
             color={"#BDBDBD"}
             backgroundColor={"transparent"}
             header={20}
@@ -62,7 +63,7 @@ const styles = StyleSheet.create({
   logoutBtn: {
     position: "absolute",
     right: 16,
-    bottom: 5,
+    bottom: 0,
   },
   user: {
     flexDirection: "row",
