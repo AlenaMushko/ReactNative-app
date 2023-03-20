@@ -57,11 +57,19 @@ export default function LoginScreen() {
       return;
     }                                               //!
     navigation.navigate('home'); 
+    navigation.navigate("home", {
+      screen: 'ProfileScreen',
+      params: { state },
+    });
+    navigation.navigate("home", {
+      screen: 'PostsScreen',
+      params: { state },
+    });
     setIsActive(false); // margin стає на початкове значення
     Keyboard.dismiss(); // ховається клавіатура
     setState(initialState); // скидаємо форму
   };
-console.log((state));
+
   return (
     <Container>
         <ImageBackground

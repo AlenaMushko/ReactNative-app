@@ -1,14 +1,33 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View, Image } from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useNavigation } from "@react-navigation/native";
 import Container from "../../Components/Container";
 
-export default function PostsScreen() {
+export default function PostsScreen({route}) {
+  // route приймаємо фото і опис 
+  const [post, setPost] = useState([]);
   const navigation = useNavigation();
+useEffect(()=>{
+  if(route.params){
+     setPost(prevState => [...prevState, route.params])
+  }
+},[route.params]);
+let userState = post[0];
+let userEmail = "";
+let userLogin = "";
+if (userState !== undefined) {
+  userEmail = userState.state.email;
+};
+
+if (userState?.state?.login !== undefined) {
+  userLogin = userState.state.login;
+};
+
   const handleLogOut = () => {
     navigation.navigate("login");
   };
+
   return (
     <Container>
       <View style={styles.header}>
@@ -29,12 +48,14 @@ export default function PostsScreen() {
           <View>
             <Image
               style={styles.imgUser}
-              source={require("../../assets/img/user.png")}
+              source={require("../../assets/img/user.png")}    
             ></Image>
           </View>
           <View>
-            <Text style={styles.nameUser}>Natali Romanova</Text>
-            <Text style={styles.emailUser}>email@example.com</Text>
+          {userLogin.length >1 ? <Text style={styles.title}>{userLogin}</Text>
+          :<Text style={styles.title}>userLogin</Text>} 
+          {userEmail.length >1 ? <Text style={styles.title}>{userEmail}</Text>
+          :<Text style={styles.title}>userEmail</Text>}
           </View>
         </View>
       </View>

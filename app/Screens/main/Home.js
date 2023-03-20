@@ -25,20 +25,20 @@ const Home = () => {
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
 
-          if (route.name === "posts") {
+          if (route.name === "PostsScreen") {
             iconName = focused ? "apps-outline" : "apps-outline";
-          } else if (route.name === "create") {
+          } else if (route.name === "CreatePostsScreen") {
             iconName = focused ? "add-circle-outline" : "add-circle-outline";
-          } else if (route.name === "profile") {
+          } else if (route.name === "ProfileScreen") {
             iconName = focused ? "happy-outline" : "happy-outline";
           }
           return <Ionicons name={iconName} size={size} color={color} />;
         },
       })}
     >
-      <MainTab.Screen name="posts" component={PostsScreen} />
-      <MainTab.Screen name="create" component={CreatePostsScreen} />
-      <MainTab.Screen name="profile" component={ProfileScreen} />
+      <MainTab.Screen name="PostsScreen" component={PostsScreen} />
+      <MainTab.Screen name="CreatePostsScreen" component={CreatePostsScreen} />
+      <MainTab.Screen name="ProfileScreen" component={ProfileScreen} />
     </MainTab.Navigator>
   );
 };
