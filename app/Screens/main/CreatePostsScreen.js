@@ -1,48 +1,138 @@
-import React from "react";
-import { StyleSheet, Text, View, Image, TextInput, KeyboardAvoidingView } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TextInput,
+  KeyboardAvoidingView,
+  Keyboard,
+} from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useNavigation } from "@react-navigation/native";
+import { Camera } from "expo-camera";
 import Button from "../../Components/Button";
 import Container from "../../Components/Container";
+import { TouchableOpacity } from "react-native-gesture-handler";
+
+const initialPhotoInfo = {
+  name: "",
+  place: "",
+};
 
 export default function CreatePostsScreen() {
+  const [photoInfo, setPhotoInfo] = useState(initialPhotoInfo);
+  const [hasPermission, setHasPermission] = useState(null);
+  const [camera, setCamera] = useState(null);
+  const [photo, setPhoto] = useState("");
+  const [cameraType, setCameraType] = useState(Camera.Constants.Type.back);
+
   const navigation = useNavigation();
+  // щоб отримати дозвіл від користувача
+  useEffect(() => {
+    (async () => {
+      const { status } = await Camera.requestCameraPermissionsAsync();
+      setHasPermission(status === "granted");
+    })();
+  }, []);
+
   const handleArrow = () => {
     navigation.navigate("home");
   };
+
+  const handleCameraReady = () => {
+    console.log("Camera is ready!");
+    // Now you can access the camera
+  };
+  // робити фото
+  const takePhoto = async () => {
+    const photo = await camera.takePictureAsync();
+    setPhoto(photo.uri);
+  };
+  // вибираємо камеру
+  const handleCameraType = () => {
+    setCameraType(
+      cameraType === Camera.Constants.Type.back
+        ? Camera.Constants.Type.front
+        : Camera.Constants.Type.back
+    );
+  };
+  // відправляти фото
+  const sendPhoto = async () => {
+    navigation.navigate("PostsScreen", { photo, photoInfo });
+    Keyboard.dismiss(); // ховається клавіатура
+    setPhotoInfo(initialPhotoInfo); // скидаємо форму
+    setPhoto("");
+  };
   return (
     <Container>
-     
-        <View style={styles.header}>
-          <View style={styles.arrowBtn}>
-            <AntDesign.Button
-              name="arrowleft"
-              size={24}
-              color={"#BDBDBD"}
-              backgroundColor={"transparent"}
-              header={20}
-              onPress={handleArrow}
-            />
-          </View>
-          <Text>CreatePostsScreen</Text>
+      <View style={styles.header}>
+        <View style={styles.arrowBtn}>
+          <AntDesign.Button
+            name="arrowleft"
+            size={24}
+            color={"#BDBDBD"}
+            backgroundColor={"transparent"}
+            header={20}
+            onPress={handleArrow}
+          />
         </View>
-        <View style={styles.wraper}>
-          <View style={styles.boxPhoto}>
-            <Image
-              style={styles.addPhoto}
-              source={require("../../assets/img/addPhoto.png")}
-            ></Image>
+        <Text>CreatePostsScreen</Text>
+      </View>
+      <View style={styles.wraper}>
+        <Camera
+          style={styles.camera}
+          onCameraReady={handleCameraReady}
+          ref={setCamera}
+          type={cameraType}
+        >
+          {/* щоб бачити фото яке в тебе вийшло */}
+          {photo && (
+            <View style={styles.photo}>
+              <Image
+                source={{ uri: photo }}
+                style={{ width: 130, height: 130 }}
+              />
+            </View>
+          )}
+          <TouchableOpacity style={styles.snapContainer} onPress={takePhoto}>
+            <View>
+              <Image
+                style={styles.addPhoto}
+                source={require("../../assets/img/addPhoto.png")}
+              ></Image>
+            </View>
+          </TouchableOpacity>
+
+          <View
+            style={{
+              backgroundColor: "transparent",
+              padding: 50,
+            }}
+          >
+            <TouchableOpacity onPress={handleCameraType}>
+              <Text style={styles.flip}>Flip camera</Text>
+            </TouchableOpacity>
           </View>
-          <Text style={{ ...styles.title, marginTop: 8 }}>Download photo</Text>
-          <KeyboardAvoidingView
-        behavior={Platform.OS == "ios" ? "padding" : "height"}
-      >
+        </Camera>
+
+        <Text style={{ ...styles.title, marginTop: 8 }}>Download photo</Text>
+        <KeyboardAvoidingView
+          behavior={Platform.OS == "ios" ? "padding" : "height"}
+        >
           <View style={styles.createPost}>
             <TextInput
               style={{ ...styles.title, ...styles.input }}
               keyboardType="default"
               placeholder="Name..."
               placeholderTextColor="#BDBDBD"
+              onChangeText={(value) =>
+                setPhotoInfo((prevState) => ({
+                  ...prevState,
+                  name: value.trim(),
+                }))
+              }
+              value={photoInfo.name}
             />
 
             <View style={styles.location}>
@@ -56,13 +146,17 @@ export default function CreatePostsScreen() {
                 keyboardType="default"
                 placeholder="Place..."
                 placeholderTextColor="#BDBDBD"
+                onChangeText={(value) =>
+                  setPhotoInfo((prevState) => ({
+                    ...prevState,
+                    place: value.trim(),
+                  }))
+                }
+                value={photoInfo.place}
               />
             </View>
 
-            <Button
-              //  onSubmit={handleSubmit}
-              text="Publish"
-            />
+            <Button onSubmit={sendPhoto} text="Publish" />
             <View style={styles.deletePost}>
               <Image
                 style={styles.delete}
@@ -70,9 +164,8 @@ export default function CreatePostsScreen() {
               ></Image>
             </View>
           </View>
-          </KeyboardAvoidingView>
-        </View>
-      
+        </KeyboardAvoidingView>
+      </View>
     </Container>
   );
 }
@@ -105,24 +198,35 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 32,
   },
-  boxPhoto: {
-    width: "100%",
-    height: 200,
-    backgroundColor: "#F6F6F6",
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#E8E8E8",
-    position: "relative",
-    alignItems: "center",
-    justifyContent: "center",
-  },
   addPhoto: {
     width: 60,
     height: 60,
     backgroundColor: "#FFFFFF",
     borderRadius: 50,
   },
-
+  camera: {
+    height: 200,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#E8E8E8",
+    alignItems: "center",
+    borderRadius: 8,
+  },
+  snapContainer: {
+    borderWidth: 1,
+    borderRadius: 50,
+    borderColor: "#E8E8E8",
+    width: 65,
+    height: 65,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 50,
+  },
+  flip: {
+    fontSize: 24,
+    marginBottom: 10,
+    color: "#FFFFFF",
+  },
   title: {
     fontFamily: "Roboto_Regular",
     fontSize: 16,
@@ -159,5 +263,12 @@ const styles = StyleSheet.create({
     bottom: 16,
     width: 16,
     height: 18,
+  },
+  photo: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    borderWidth: 1,
+    borderColor: "#E8E8E8",
   },
 });

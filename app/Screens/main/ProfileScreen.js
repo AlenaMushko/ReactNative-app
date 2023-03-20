@@ -1,15 +1,51 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View, ImageBackground, Image } from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useNavigation } from "@react-navigation/native";
 import AddUserIcon from "../../assets/svg/addUserIcon";
 import Container from "../../Components/Container";
 
-export default function ProfileScreen() {
-  const navigation = useNavigation();
+export default function ProfileScreen({route}) {
+//   console.log("route", route);
+//   const [user, setUser] = useState([]);
+//   const navigation = useNavigation();
+// useEffect(()=>{
+//   if(route.params){
+//     setUser(prevState => [...prevState, route.params])
+//   }
+// },[route.params]);
+// let userState = user[0];
+// let userLogin = "";
+// if (userState !== undefined) {
+//   userLogin = userState.state.login;
+// };
+// console.log("userLogin Profil",user);
+// console.log("userLogin Profil",userLogin);
+
+const [post, setPost] = useState([]);
+const navigation = useNavigation();
+useEffect(()=>{
+if(route.params){
+   setPost(prevState => [...prevState, route.params])
+}
+},[route.params]);
+let userState = post[0];
+let userEmail = "";
+let userLogin = "";
+if (userState !== undefined) {
+userEmail = userState.state.email;
+};
+
+if (userState?.state?.login !== undefined) {
+userLogin = userState.state.login;
+};
+console.log("route.params Profil",route);
+console.log("userLogin Profil",userLogin);
+
   const handleLogOut = () => {
     navigation.navigate("login");
   };
+ 
   return (
     <Container>
       <ImageBackground
@@ -41,7 +77,8 @@ export default function ProfileScreen() {
               onPress={handleLogOut}
             />
           </View>
-          <Text style={styles.title}>Natali Romanova</Text>
+          {userLogin.length >1 ? <Text style={styles.title}>{userLogin}</Text>
+          :<Text style={styles.title}>userLogin</Text>}
         </View>
       </ImageBackground>
     </Container>
