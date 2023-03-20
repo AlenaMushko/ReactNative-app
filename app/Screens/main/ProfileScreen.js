@@ -39,8 +39,6 @@ userEmail = userState.state.email;
 if (userState?.state?.login !== undefined) {
 userLogin = userState.state.login;
 };
-console.log("route.params Profil",route);
-console.log("userLogin Profil",userLogin);
 
   const handleLogOut = () => {
     navigation.navigate("login");
@@ -77,8 +75,9 @@ console.log("userLogin Profil",userLogin);
               onPress={handleLogOut}
             />
           </View>
-          {userLogin.length >1 ? <Text style={styles.title}>{userLogin}</Text>
-          :<Text style={styles.title}>userLogin</Text>}
+          {/* {userLogin.length >1 ? <Text style={styles.title}>{userLogin}</Text>
+          :<Text style={styles.title}>userLogin</Text>} */}
+          <Text style={styles.title}>userLogin</Text>
         </View>
       </ImageBackground>
     </Container>

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -11,6 +11,9 @@ import {
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useNavigation } from "@react-navigation/native";
 import { Camera } from "expo-camera";
+import { useKeyboard } from "@react-native-community/hooks";
+import * as Location from "expo-location";
+
 import Button from "../../Components/Button";
 import Container from "../../Components/Container";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -26,8 +29,11 @@ export default function CreatePostsScreen() {
   const [camera, setCamera] = useState(null);
   const [photo, setPhoto] = useState("");
   const [cameraType, setCameraType] = useState(Camera.Constants.Type.back);
+  const [location, setLocation] = useState(null);
+  const [errorMsg, setErrorMsg] = useState(null);
 
   const navigation = useNavigation();
+
   // щоб отримати дозвіл від користувача
   useEffect(() => {
     (async () => {
@@ -37,18 +43,35 @@ export default function CreatePostsScreen() {
   }, []);
 
   const handleArrow = () => {
-    navigation.navigate("home");
+    navigation.navigate("PostsScreen");
   };
 
   const handleCameraReady = () => {
     console.log("Camera is ready!");
     // Now you can access the camera
   };
+
   // робити фото
   const takePhoto = async () => {
     const photo = await camera.takePictureAsync();
+
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== "granted") {
+      setErrorMsg("Permission to access location was denied");
+      return;
+    }
+    let location = await Location.getCurrentPositionAsync({});
+    setLocation(location.coords);
     setPhoto(photo.uri);
   };
+
+  let text = 'Waiting..';
+  if (errorMsg) {
+    text = errorMsg;
+  } else if (location) {
+    text = JSON.stringify(location);
+  }
+
   // вибираємо камеру
   const handleCameraType = () => {
     setCameraType(
@@ -59,11 +82,14 @@ export default function CreatePostsScreen() {
   };
   // відправляти фото
   const sendPhoto = async () => {
-    navigation.navigate("PostsScreen", { photo, photoInfo });
+    navigation.navigate("PostsScreen", { photo, photoInfo, location });
     Keyboard.dismiss(); // ховається клавіатура
     setPhotoInfo(initialPhotoInfo); // скидаємо форму
     setPhoto("");
   };
+
+  const keyboard = useKeyboard();
+
   return (
     <Container>
       <View style={styles.header}>
@@ -80,43 +106,51 @@ export default function CreatePostsScreen() {
         <Text>CreatePostsScreen</Text>
       </View>
       <View style={styles.wraper}>
-        <Camera
-          style={styles.camera}
-          onCameraReady={handleCameraReady}
-          ref={setCamera}
-          type={cameraType}
-        >
-          {/* щоб бачити фото яке в тебе вийшло */}
-          {photo && (
-            <View style={styles.photo}>
-              <Image
-                source={{ uri: photo }}
-                style={{ width: 130, height: 130 }}
-              />
-            </View>
-          )}
-          <TouchableOpacity style={styles.snapContainer} onPress={takePhoto}>
-            <View>
-              <Image
-                style={styles.addPhoto}
-                source={require("../../assets/img/addPhoto.png")}
-              ></Image>
-            </View>
-          </TouchableOpacity>
+        {!keyboard.keyboardShown && (
+          <>
+            <Camera
+              style={styles.camera}
+              onCameraReady={handleCameraReady}
+              ref={setCamera}
+              type={cameraType}
+            >
+              {photo && (
+                <View style={styles.photo}>
+                  <Image
+                    source={{ uri: photo }}
+                    style={{ width: 130, height: 130 }}
+                  />
+                </View>
+              )}
+              <TouchableOpacity
+                style={styles.snapContainer}
+                onPress={takePhoto}
+              >
+                <View>
+                  <Image
+                    style={styles.addPhoto}
+                    source={require("../../assets/img/addPhoto.png")}
+                  ></Image>
+                </View>
+              </TouchableOpacity>
 
-          <View
-            style={{
-              backgroundColor: "transparent",
-              padding: 50,
-            }}
-          >
-            <TouchableOpacity onPress={handleCameraType}>
-              <Text style={styles.flip}>Flip camera</Text>
-            </TouchableOpacity>
-          </View>
-        </Camera>
+              <View
+                style={{
+                  backgroundColor: "transparent",
+                  padding: 50,
+                }}
+              >
+                <TouchableOpacity onPress={handleCameraType}>
+                  <Text style={styles.flip}>Flip camera</Text>
+                </TouchableOpacity>
+              </View>
+            </Camera>
+            <Text style={{ ...styles.title, marginTop: 8 }}>
+              Download photo
+            </Text>
+          </>
+        )}
 
-        <Text style={{ ...styles.title, marginTop: 8 }}>Download photo</Text>
         <KeyboardAvoidingView
           behavior={Platform.OS == "ios" ? "padding" : "height"}
         >
@@ -129,7 +163,7 @@ export default function CreatePostsScreen() {
               onChangeText={(value) =>
                 setPhotoInfo((prevState) => ({
                   ...prevState,
-                  name: value.trim(),
+                  name: value,
                 }))
               }
               value={photoInfo.name}
@@ -142,14 +176,14 @@ export default function CreatePostsScreen() {
               ></Image>
 
               <TextInput
-                style={{ ...styles.title, ...styles.input, marginLeft: 18 }}
+                style={{ ...styles.title, ...styles.input, marginLeft: 32 }}
                 keyboardType="default"
                 placeholder="Place..."
                 placeholderTextColor="#BDBDBD"
                 onChangeText={(value) =>
                   setPhotoInfo((prevState) => ({
                     ...prevState,
-                    place: value.trim(),
+                    place: value,
                   }))
                 }
                 value={photoInfo.place}
@@ -175,7 +209,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     paddingTop: 55,
     paddingBottom: 11,
-    paddingHorizontal: 16,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#fff",
@@ -195,7 +228,6 @@ const styles = StyleSheet.create({
   },
   wraper: {
     flex: 1,
-    paddingHorizontal: 16,
     paddingTop: 32,
   },
   addPhoto: {
@@ -210,7 +242,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#E8E8E8",
     alignItems: "center",
-    borderRadius: 8,
   },
   snapContainer: {
     borderWidth: 1,
@@ -261,8 +292,9 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: 0,
     bottom: 16,
-    width: 16,
-    height: 18,
+    width: 24,
+    height: 24,
+    color: "#BDBDBD",
   },
   photo: {
     position: "absolute",
