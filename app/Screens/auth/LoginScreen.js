@@ -58,10 +58,6 @@ export default function LoginScreen() {
     }                                               //!
     navigation.navigate('home'); 
     navigation.navigate("home", {
-      screen: 'ProfileScreen',
-      params: { state },
-    });
-    navigation.navigate("home", {
       screen: 'PostsScreen',
       params: { state },
     });
