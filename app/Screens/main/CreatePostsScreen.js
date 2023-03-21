@@ -61,8 +61,8 @@ export default function CreatePostsScreen() {
       return;
     }
     let location = await Location.getCurrentPositionAsync({});
-    setLocation(location.coords);
     setPhoto(photo.uri);
+    setLocation(location.coords);
   };
 
   let text = 'Waiting..';
@@ -82,7 +82,7 @@ export default function CreatePostsScreen() {
   };
   // відправляти фото
   const sendPhoto = async () => {
-    navigation.navigate("PostsScreen", { photo, photoInfo, location });
+    navigation.navigate("DefaultScreensPosts", { photo, photoInfo, location });
     Keyboard.dismiss(); // ховається клавіатура
     setPhotoInfo(initialPhotoInfo); // скидаємо форму
     setPhoto("");
@@ -206,6 +206,7 @@ export default function CreatePostsScreen() {
 
 const styles = StyleSheet.create({
   header: {
+    paddingHorizontal: 16,
     flexDirection: "row",
     paddingTop: 55,
     paddingBottom: 11,
@@ -229,6 +230,7 @@ const styles = StyleSheet.create({
   wraper: {
     flex: 1,
     paddingTop: 32,
+    paddingHorizontal: 16,
   },
   addPhoto: {
     width: 60,
