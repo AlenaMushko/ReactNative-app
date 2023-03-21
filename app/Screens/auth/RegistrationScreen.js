@@ -191,6 +191,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   box: {
+    paddingHorizontal: 16,
     width: "100%",
     backgroundColor: "#FFFFFF",
     borderTopLeftRadius: 25,

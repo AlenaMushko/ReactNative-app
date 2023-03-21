@@ -94,6 +94,7 @@ const styles = StyleSheet.create({
   box: {
     flex: 1,
     width: "100%",
+    paddingHorizontal: 16,
     backgroundColor: "#FFFFFF",
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
