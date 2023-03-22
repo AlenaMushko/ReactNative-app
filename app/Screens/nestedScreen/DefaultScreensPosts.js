@@ -26,9 +26,9 @@ export default function DefaultScreensPosts({ route }) {
   const postObj = {...post};
 //   const locationProps = postObj.location;
 
-  console.log('====================================');
-  console.log("postsObj", postObj);
-  console.log('====================================');
+  // console.log('====================================');
+  // console.log("postsObj", postObj);
+  // console.log('====================================');
 //   console.log("location post", postObj.location);
 //   console.log("photo post", postObj.photo);
 //   console.log("photoInfo post", postObj.photoInfo);
