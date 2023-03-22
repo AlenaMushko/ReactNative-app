@@ -40,7 +40,6 @@ export default function RegistrationScreen() {
 
   const handleEndEditing = (inputValue) => {
     setIsActive(false);
-    console.log("EndEditing", inputValue);
     setIsFocus((prevState) => ({ ...prevState, [inputValue]: false }));
   };
 
@@ -52,10 +51,10 @@ export default function RegistrationScreen() {
       return;
     }                                               //!
     navigation.navigate('home'); 
-  navigation.navigate("home", {
-    screen: 'PostsScreen',
-    params: { state },
-  });
+  // navigation.navigate("home", {
+  //   screen: 'PostsScreen',
+  //   params: { state },
+  // });
     setIsActive(false); // margin стає на початкове значення
     Keyboard.dismiss(); // ховається клавіатура
     setState(initialState); // скидаємо форму
