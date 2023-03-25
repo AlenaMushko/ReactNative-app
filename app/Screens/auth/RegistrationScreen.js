@@ -10,9 +10,11 @@ import {
   KeyboardAvoidingView,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { useDispatch } from "react-redux";
 import AddUserIcon from "../../assets/svg/addUserIcon";
 import Container from "../../Components/Container";
 import Button from "../../Components/Button";
+import { authSignUpUser } from "../redux/auth/authOperations";
 
 const initialState = {
   login: "",
@@ -31,7 +33,9 @@ export default function RegistrationScreen() {
   const [isFocus, setIsFocus] = useState(initialIsFocus);
   const [isShowPassword, setIsShowPassword] = useState(false);
   const [isActive, setIsActive] = useState(false);
+
   const navigation = useNavigation();
+  const dispatch = useDispatch();
 
   const handleFocus = (inputValue) => {
     setIsActive(true);
@@ -44,22 +48,22 @@ export default function RegistrationScreen() {
   };
 
   const handleSubmit = async () => {
-    const {login, email, password } = state;
+    const { login, email, password } = state;
 
     if (!login || !email || !password) {
       showToast();
       return;
-    }                                               //!
-    navigation.navigate('home'); 
-  // navigation.navigate("home", {
-  //   screen: 'PostsScreen',
-  //   params: { state },
-  // });
+    } //!
+    navigation.navigate("home");
+    // navigation.navigate("home", {
+    //   screen: 'PostsScreen',
+    //   params: { state },
+    // });
     setIsActive(false); // margin стає на початкове значення
     Keyboard.dismiss(); // ховається клавіатура
+    dispatch(authSignUpUser(state))
     setState(initialState); // скидаємо форму
   };
-
 
   const handleGoToLogin = () => {
     navigation.navigate("login");
@@ -74,108 +78,111 @@ export default function RegistrationScreen() {
         <KeyboardAvoidingView
           behavior={Platform.OS == "ios" ? "padding" : "height"}
         >
-            <View style={{ ...styles.box, paddingBottom: isActive ? 32 : 78 }}>
-              {isActive === true ? (
-                <View style={styles.userPhoto}>
-                  <ImageBackground
-                    style={styles.imgBg}
-                    source={require("../../assets/img/user.png")}
-                  >
-                    <AddUserIcon
-                      style={styles.addPhoto}
-                      fill={"#E8E8E8"}
-                      stroke={"#E8E8E8"}
-                    />
-                  </ImageBackground>
-                </View>
-              ) : (
-                <View style={styles.userPhoto}>
+          <View style={{ ...styles.box, paddingBottom: isActive ? 32 : 78 }}>
+            {isActive === true ? (
+              <View style={styles.userPhoto}>
+                <ImageBackground
+                  style={styles.imgBg}
+                  source={require("../../assets/img/user.png")}
+                >
                   <AddUserIcon
                     style={styles.addPhoto}
-                    fill={"#FF6C00"}
-                    stroke={"#FF6C00"}
+                    fill={"#E8E8E8"}
+                    stroke={"#E8E8E8"}
                   />
-                </View>
-              )}
+                </ImageBackground>
+              </View>
+            ) : (
+              <View style={styles.userPhoto}>
+                <AddUserIcon
+                  style={styles.addPhoto}
+                  fill={"#FF6C00"}
+                  stroke={"#FF6C00"}
+                />
+              </View>
+            )}
 
-              <Text style={styles.title}>Registration</Text>
-              <View style={styles.form}>
+            <Text style={styles.title}>Registration</Text>
+            <View style={styles.form}>
+              <TextInput
+                style={{
+                  ...styles.input,
+                  borderColor: isFocus.login ? "#FF6C00" : "#E8E8E8",
+                }}
+                onFocus={() => handleFocus("login")}
+                onEndEditing={() => handleEndEditing("login")}
+                onChangeText={(value) =>
+                  setState((prevState) => ({
+                    ...prevState,
+                    login: value.trim(),
+                  }))
+                }
+                value={state.login}
+                placeholder="login"
+                keyboardType="default"
+              />
+              <TextInput
+                style={{
+                  ...styles.input,
+                  borderColor: isFocus.email ? "#FF6C00" : "#E8E8E8",
+                }}
+                onFocus={() => handleFocus("email")}
+                onEndEditing={() => handleEndEditing("email")}
+                onChangeText={(value) =>
+                  setState((prevState) => ({
+                    ...prevState,
+                    email: value.trim().toLowerCase(),
+                  }))
+                }
+                value={state.email}
+                placeholder="email address"
+                keyboardType="email-address"
+              />
+              <View style={styles.inputPassword}>
                 <TextInput
                   style={{
                     ...styles.input,
-                    borderColor: isFocus.login ? "#FF6C00" : "#E8E8E8",
+                    borderColor: isFocus.password ? "#FF6C00" : "#E8E8E8",
                   }}
-                  onFocus={() => handleFocus("login")}
-                  onEndEditing={() => handleEndEditing("login")}
+                  onFocus={() => handleFocus("password")}
+                  onEndEditing={() => handleEndEditing("password")}
                   onChangeText={(value) =>
                     setState((prevState) => ({
                       ...prevState,
-                      login: value.trim(),
+                      password: value.trim(),
                     }))
                   }
-                  value={state.login}
-                  placeholder="login"
-                  keyboardType="default"
+                  value={state.password}
+                  placeholder="password"
+                  keyboardType="numeric"
+                  secureTextEntry={!isShowPassword}
                 />
-                <TextInput
-                  style={{
-                    ...styles.input,
-                    borderColor: isFocus.email ? "#FF6C00" : "#E8E8E8",
-                  }}
-                  onFocus={() => handleFocus("email")}
-                  onEndEditing={() => handleEndEditing("email")}
-                  onChangeText={(value) =>
-                    setState((prevState) => ({ ...prevState, email: value.trim().toLowerCase() }))
-                  }
-                  value={state.email}
-                  placeholder="email address"
-                  keyboardType="email-address"
-                />
-                <View style={styles.inputPassword}>
-                  <TextInput
-                    style={{
-                      ...styles.input,
-                      borderColor: isFocus.password ? "#FF6C00" : "#E8E8E8",
-                    }}
-                    onFocus={() => handleFocus("password")}
-                    onEndEditing={() => handleEndEditing("password")}
-                    onChangeText={(value) =>
-                      setState((prevState) => ({
-                        ...prevState,
-                        password: value.trim(),
-                      }))
-                    }
-                    value={state.password}
-                    placeholder="password"
-                    keyboardType="numeric"
-                    secureTextEntry={!isShowPassword}
-                  />
-                  {isShowPassword === true ? (
-                    <Text
-                      style={styles.show}
-                      onPress={() => setIsShowPassword((prev) => !prev)}
-                    >
-                      Hide
-                    </Text>
-                  ) : (
-                    <Text
-                      style={styles.show}
-                      onPress={() => setIsShowPassword((prev) => !prev)}
-                    >
-                      Show
-                    </Text>
-                  )}
-                </View>
-                {!isActive && (
-                  <View>
-                    <Button onSubmit={handleSubmit}  text="Register" />
-                    <Text style={styles.inAccount} onPress={handleGoToLogin}>
-                      Already have an account? Log in
-                    </Text>
-                  </View>
+                {isShowPassword === true ? (
+                  <Text
+                    style={styles.show}
+                    onPress={() => setIsShowPassword((prev) => !prev)}
+                  >
+                    Hide
+                  </Text>
+                ) : (
+                  <Text
+                    style={styles.show}
+                    onPress={() => setIsShowPassword((prev) => !prev)}
+                  >
+                    Show
+                  </Text>
                 )}
               </View>
+              {!isActive && (
+                <View>
+                  <Button onSubmit={handleSubmit} text="Register" />
+                  <Text style={styles.inAccount} onPress={handleGoToLogin}>
+                    Already have an account? Log in
+                  </Text>
+                </View>
+              )}
             </View>
+          </View>
         </KeyboardAvoidingView>
       </ImageBackground>
     </Container>
