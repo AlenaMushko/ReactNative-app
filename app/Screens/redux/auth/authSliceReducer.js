@@ -9,19 +9,14 @@ const initialState = {
 
 export const authSlice = createSlice({
   name: "auth",
-  initialState: {
-    userId: null,
-    nickname: null,
-    email: null,
-    photo: null,
-  },
+  initialState,
   reducers: {
     //  incrementByAmount: (state, action) => {
     //   state.value += action.payload;
     // },
   },
 });
-
+export const userSelector = (state) => state.auth;
 // Action creators are generated for each case reducer function
 // export const { increment, decrement, incrementByAmount } = authSlice.actions;
 
