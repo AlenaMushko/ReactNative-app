@@ -13,6 +13,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import Container from "../../Components/Container";
 import Button from "../../Components/Button";
+import { useDispatch } from "react-redux";
 
 const initialState = {
   email: "",
@@ -29,6 +30,8 @@ export default function LoginScreen() {
   const [isFocus, setIsFocus] = useState(initialIsFocus);
   const [isShowPassword, setIsShowPassword] = useState(false);
   const [isActive, setIsActive] = useState(false);
+
+  const dispatch = useDispatch();
   const navigation = useNavigation();
 
   const handleFocus = (inputValue) => {
@@ -63,6 +66,10 @@ export default function LoginScreen() {
     // });
     setIsActive(false); // margin стає на початкове значення
     Keyboard.dismiss(); // ховається клавіатура
+    dispatch(authSignInUser(state));
+    console.log('====================================');
+    console.log("stateLogin", state);
+    console.log('====================================');
     setState(initialState); // скидаємо форму
   };
 

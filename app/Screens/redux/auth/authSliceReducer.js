@@ -4,20 +4,30 @@ const initialState = {
   userId: null,
   login: null,
   email: null,
-  photo: null,
+  userPhoto: null,
+  stateChange:null,
 };
 
 export const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    //  incrementByAmount: (state, action) => {
-    //   state.value += action.payload;
-    // },
+    updateUserProfile:(state,{payload})=>({
+      ...state, 
+      userId: payload.userId,
+     login: payload.login,
+  //   email:payload.email,
+  userPhoto:payload.userPhoto,
+}),
+  authStateChange:(state, {payload})=>({
+    ...state,
+stateChange: payload.stateChange,
+  })
   },
 });
+console.log("authSlice", authSlice);
 export const userSelector = (state) => state.auth;
 // Action creators are generated for each case reducer function
-// export const { increment, decrement, incrementByAmount } = authSlice.actions;
+export const {updateUserProfile, authStateChange} = authSlice.actions;
 
 export const authReducer = authSlice.reducer;

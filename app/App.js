@@ -1,5 +1,5 @@
 import { Provider } from "react-redux";
-import Main from "./main";
+import Main from "./Main";
 import { store } from "./Screens/redux/store";
 
 export default function App() {
