@@ -17,6 +17,7 @@ import * as Location from "expo-location";
 import Button from "../../Components/Button";
 import Container from "../../Components/Container";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import dataBase from "../../firebase/config";
 
 const initialPhotoInfo = {
   name: "",
@@ -65,7 +66,7 @@ export default function CreatePostsScreen() {
     setLocation(location.coords);
   };
 
-  let text = 'Waiting..';
+  let text = "Waiting..";
   if (errorMsg) {
     text = errorMsg;
   } else if (location) {
@@ -80,8 +81,23 @@ export default function CreatePostsScreen() {
         : Camera.Constants.Type.back
     );
   };
+
+  // обновляти фото
+  const uploadPhotoToServer = async () => {
+    const response = await fetch(photo);
+    const file = await response.blob(); // формат для загрузки файлів з бази даних
+    const uniquePostId = Date.now().toString();
+    console.log("uniquePostId", uniquePostId);
+    await dataBase.storage().ref(`postImages/${uniquePostId}`).put(file); // в якому форматі і як зберігати фото
+    const getPhoto = await dataBase.storage().ref("postImages").child(uniquePostId).getDownloadURL();
+      console.log("getPhoto", getPhoto);
+  };
+
+
   // відправляти фото
   const sendPhoto = async () => {
+    uploadPhotoToServer();
+    console.log("photo");
     navigation.navigate("DefaultScreensPosts", { photo, photoInfo, location });
     Keyboard.dismiss(); // ховається клавіатура
     setPhotoInfo(initialPhotoInfo); // скидаємо форму
