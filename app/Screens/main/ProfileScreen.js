@@ -4,6 +4,9 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import { useNavigation } from "@react-navigation/native";
 import AddUserIcon from "../../assets/svg/addUserIcon";
 import Container from "../../Components/Container";
+import { database } from "firebase";
+import { authSignOutUser } from "../redux/auth/authOperations";
+import { useDispatch } from "react-redux";
 
 export default function ProfileScreen({route}) {
 //   console.log("route", route);
@@ -24,11 +27,14 @@ export default function ProfileScreen({route}) {
 
 const [post, setPost] = useState([]);
 const navigation = useNavigation();
+const dispatch = useDispatch(); //створюємо портал
+
 useEffect(()=>{
 if(route.params){
    setPost(prevState => [...prevState, route.params])
 }
 },[route.params]);
+
 let userState = post[0];
 let userEmail = "";
 let userLogin = "";
@@ -40,8 +46,9 @@ if (userState?.state?.login !== undefined) {
 userLogin = userState.state.login;
 };
 
-  const handleLogOut = () => {
-    navigation.navigate("login");
+  const handleSignOut = () => {
+    console.log("signOut");
+    dispatch(authSignOutUser());
   };
  
   return (
@@ -72,7 +79,7 @@ userLogin = userState.state.login;
               color={"#BDBDBD"}
               backgroundColor={"transparent"}
               header={20}
-              onPress={handleLogOut}
+              onPress={handleSignOut}
             />
           </View>
           {/* {userLogin.length >1 ? <Text style={styles.title}>{userLogin}</Text>
