@@ -11,6 +11,7 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import { useNavigation } from "@react-navigation/native";
 import Container from "../../Components/Container";
 import EvilIcons from "@expo/vector-icons/EvilIcons";
+import dataBase from "../../firebase/config";
 
 export default function DefaultScreensPosts({ route }) {
   // route приймаємо фото і опис
@@ -23,86 +24,17 @@ export default function DefaultScreensPosts({ route }) {
       });
     }
   }, [route.params]);
-  const postObj = {...post};
-//   const locationProps = postObj.location;
 
-  // console.log('====================================');
-  // console.log("postsObj", postObj);
-  // console.log('====================================');
-//   console.log("location post", postObj.location);
-//   console.log("photo post", postObj.photo);
-//   console.log("photoInfo post", postObj.photoInfo);
-// console.log('====================================');
-// console.log(locationProps, "locationProps");
-// console.log('====================================');
-  // console.log("====================================");
-  // console.log("latitude create", location.coords.latitude);
-  // console.log("longitude create", location.coords.longitude);
-  // console.log("====================================");
-
-  // let userState = post[0];
-  // let userEmail = "";
-  // let userLogin = "";
-  // if (userState !== undefined) {
-  //   userEmail = userState.state.email;
-  // }
-
-  // if (userState?.state?.login !== undefined) {
-  //   userLogin = userState.state.login;
-  // }
+  const userLogin = dataBase.auth().currentUser.displayName;
+  const userPhoto = dataBase.auth().currentUser.photoURL;
+  const userEmail = dataBase.auth().currentUser.email;
 
   const handleLogOut = () => {
     navigation.navigate("login");
   };
 
-  // if (post?.photo) {
-  //   console.log(post);
-  //   console.log(post.photo);
-  //   console.log(post.photoInfo.name);
-  //   console.log(post.photoInfo.place);
-  // }
-
-  // const handleMapShow =()=>{
-  //     navigation.navigate("MapScreen", {item.location});
-
-  // }
   return (
     <Container>
-      {/* <View style={styles.header}>
-        <Text style={styles.title}>Posts</Text>
-        <View style={styles.logoutBtn}>
-          <AntDesign.Button
-            name="logout"
-            size={24}
-            color={"#BDBDBD"}
-            backgroundColor={"transparent"}
-            header={20}
-            onPress={handleLogOut}
-          />
-        </View>
-      </View>
-      <View style={{ flex: 1 }}>
-        <View style={styles.user}>
-          <View>
-            <Image
-              style={styles.imgUser}
-              source={require("../../assets/img/user.png")}
-            ></Image>
-          </View>
-          <View>
-            {userLogin.length > 1 ? (
-              <Text style={styles.title}>{userLogin}</Text>
-            ) : (
-              <Text style={styles.title}>userLogin</Text>
-            )}
-            {userEmail.length > 1 ? (
-              <Text style={styles.title}>{userEmail}</Text>
-            ) : (
-              <Text style={styles.title}>userEmail</Text>
-            )}
-          </View>
-        </View>
-      </View> */}
       <View style={styles.header}>
         <Text style={styles.title}>Posts</Text>
         <View style={styles.logoutBtn}>
@@ -125,8 +57,8 @@ export default function DefaultScreensPosts({ route }) {
             ></Image>
           </View>
           <View>
-            <Text style={styles.title}>userLogin</Text>
-            <Text style={styles.title}>userEmail</Text>
+            <Text style={styles.title}>{userLogin}</Text>
+            <Text style={styles.title}>{userEmail}</Text>
           </View>
         </View>
       </View>
@@ -161,8 +93,9 @@ export default function DefaultScreensPosts({ route }) {
 
                   <View style={styles.geolocation}>
                     <TouchableOpacity
-                        onPress={()=>  navigation.navigate("MapScreen", {location}) }
-                     
+                      onPress={() =>
+                        navigation.navigate("MapScreen", { location })
+                      }
                     >
                       <Image
                         style={styles.geolocationSvg}

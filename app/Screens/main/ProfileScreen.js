@@ -2,55 +2,30 @@ import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View, ImageBackground, Image } from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useNavigation } from "@react-navigation/native";
+import { useDispatch } from "react-redux";
 import AddUserIcon from "../../assets/svg/addUserIcon";
 import Container from "../../Components/Container";
-import { database } from "firebase";
 import { authSignOutUser } from "../redux/auth/authOperations";
-import { useDispatch } from "react-redux";
+import dataBase from "../../firebase/config";
 
-export default function ProfileScreen({route}) {
-//   console.log("route", route);
-//   const [user, setUser] = useState([]);
-//   const navigation = useNavigation();
-// useEffect(()=>{
-//   if(route.params){
-//     setUser(prevState => [...prevState, route.params])
-//   }
-// },[route.params]);
-// let userState = user[0];
-// let userLogin = "";
-// if (userState !== undefined) {
-//   userLogin = userState.state.login;
-// };
-// console.log("userLogin Profil",user);
-// console.log("userLogin Profil",userLogin);
+export default function ProfileScreen({ route }) {
+  const [post, setPost] = useState([]);
+  const navigation = useNavigation();
+  const dispatch = useDispatch(); //створюємо портал
 
-const [post, setPost] = useState([]);
-const navigation = useNavigation();
-const dispatch = useDispatch(); //створюємо портал
-
-useEffect(()=>{
-if(route.params){
-   setPost(prevState => [...prevState, route.params])
-}
-},[route.params]);
-
-let userState = post[0];
-let userEmail = "";
-let userLogin = "";
-if (userState !== undefined) {
-userEmail = userState.state.email;
-};
-
-if (userState?.state?.login !== undefined) {
-userLogin = userState.state.login;
-};
+  useEffect(() => {
+    if (route.params) {
+      setPost((prevState) => [...prevState, route.params]);
+    }
+  }, [route.params]);
 
   const handleSignOut = () => {
-    console.log("signOut");
     dispatch(authSignOutUser());
   };
- 
+
+  const userLogin = dataBase.auth().currentUser.displayName;
+  const userPhoto = dataBase.auth().currentUser.photoURL;
+
   return (
     <Container>
       <ImageBackground
@@ -58,7 +33,6 @@ userLogin = userState.state.login;
         source={require("../../assets/img/BGbgMountains.png")}
       >
         <View style={styles.box}>
-          
           <View style={styles.userPhoto}>
             <ImageBackground
               style={styles.imgBg}
@@ -82,9 +56,7 @@ userLogin = userState.state.login;
               onPress={handleSignOut}
             />
           </View>
-          {/* {userLogin.length >1 ? <Text style={styles.title}>{userLogin}</Text>
-          :<Text style={styles.title}>userLogin</Text>} */}
-          <Text style={styles.title}>userLogin</Text>
+          <Text style={styles.title}>{userLogin}</Text>
         </View>
       </ImageBackground>
     </Container>
