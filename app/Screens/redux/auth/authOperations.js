@@ -41,7 +41,6 @@ const authSignInUser =
   };
 const authSignOutUser = () => async (dispatch, getState) => {
   try {
-    console.log("operation signOut");
     await dataBase.auth().signOut();
     dispatch(authSignOut());
   } catch (error) {
@@ -72,4 +71,13 @@ const authStateChangeUser = () => async (dispatch, getState) => {
   }
 };
 
-export { authSignInUser, authSignOutUser, authSignUpUser, authStateChangeUser };
+const authGetState = async () => {
+  try {
+    const snapshot = await dataBase.auth().getRedirectResult
+    snapshot.forEach((doc) => console.log(`${doc.id} =>`, doc.data()));
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export { authSignInUser, authSignOutUser, authSignUpUser, authStateChangeUser, authGetState };
