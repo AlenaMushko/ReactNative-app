@@ -55,8 +55,8 @@ const authStateChangeUser = () => async (dispatch, getState) => {
           userPhoto: user.photoURL,
         };
 
-        dispatch(authStateChange({ stateChange: true }));
-    console.log("dispatch stateChange", user);
+        dispatch(authStateChange({ stateChange: true })); //якщо є зарєєстрований користувач, то автоматично входимо
+        console.log("dispatch stateChange", user);
         dispatch(updateUserProfile(userUpdateProfile));
       }
     });
@@ -66,6 +66,9 @@ const authStateChangeUser = () => async (dispatch, getState) => {
   }
 };
 
-export { authSignInUser,
-  //  authSignOutUser, 
-   authSignUpUser, authStateChangeUser };
+export {
+  authSignInUser,
+  //  authSignOutUser,
+  authSignUpUser,
+  authStateChangeUser,
+};
