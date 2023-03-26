@@ -1,5 +1,7 @@
 import * as firebase from "firebase";
 import "firebase/auth"; //можливість авторизації
+import "firebase/storage";
+import "firebase/firestore";  // база даних після реєстрації
 
 const firebaseConfig = {
     apiKey: "AIzaSyDYOmHRk9ubnh4tc0zGRVaj8Sxetg4To3A",
