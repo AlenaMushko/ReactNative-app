@@ -1,5 +1,9 @@
 import dataBase from "../../../firebase/config";
-import { updateUserProfile, authStateChange } from "./authSliceReducer";
+import {
+  updateUserProfile,
+  authStateChange,
+  authSignOut,
+} from "./authSliceReducer";
 
 const authSignUpUser =
   ({ email, password, login, userPhoto }) =>
@@ -35,14 +39,16 @@ const authSignInUser =
       console.log(error);
     }
   };
-// const authSignOutUser = () => async (dispatch, getState) => {
-//     try {
-//         await dataBase.auth().signOut();
-//       } catch (error) {
-//         console.log(error.message);
-//         console.log(error);
-//       }
-// };
+const authSignOutUser = () => async (dispatch, getState) => {
+  try {
+    console.log("operation signOut");
+    await dataBase.auth().signOut();
+    dispatch(authSignOut());
+  } catch (error) {
+    console.log(error.message);
+    console.log(error);
+  }
+};
 
 const authStateChangeUser = () => async (dispatch, getState) => {
   try {
@@ -66,9 +72,4 @@ const authStateChangeUser = () => async (dispatch, getState) => {
   }
 };
 
-export {
-  authSignInUser,
-  //  authSignOutUser,
-  authSignUpUser,
-  authStateChangeUser,
-};
+export { authSignInUser, authSignOutUser, authSignUpUser, authStateChangeUser };

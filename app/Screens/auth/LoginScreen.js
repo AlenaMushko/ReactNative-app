@@ -14,6 +14,7 @@ import { useNavigation } from "@react-navigation/native";
 import Container from "../../Components/Container";
 import Button from "../../Components/Button";
 import { useDispatch } from "react-redux";
+import { authSignInUser } from "../redux/auth/authOperations";
 
 const initialState = {
   email: "",

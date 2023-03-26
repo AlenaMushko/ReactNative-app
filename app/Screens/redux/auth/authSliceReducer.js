@@ -22,12 +22,19 @@ export const authSlice = createSlice({
   authStateChange:(state, {payload})=>({
     ...state,
 stateChange: payload.stateChange,
-  })
+  }),
+   authSignOut: ()=>({
+    userId: null,
+    login: null,
+    email: null,
+    userPhoto: null,
+    stateChange:false,
+  }),
   },
 });
 console.log("authSlice", authSlice);
 export const userSelector = (state) => state.auth;
 // Action creators are generated for each case reducer function
-export const {updateUserProfile, authStateChange} = authSlice.actions;
+export const {updateUserProfile, authStateChange, authSignOut} = authSlice.actions;
 
 export const authReducer = authSlice.reducer;
