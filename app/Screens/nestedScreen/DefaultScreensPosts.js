@@ -12,11 +12,14 @@ import { useNavigation } from "@react-navigation/native";
 import Container from "../../Components/Container";
 import EvilIcons from "@expo/vector-icons/EvilIcons";
 import dataBase from "../../firebase/config";
+import { authSignOutUser } from "../redux/auth/authOperations";
+import { useDispatch } from "react-redux";
 
 export default function DefaultScreensPosts({ route }) {
   // route приймаємо фото і опис
   const [post, setPost] = useState([]);
   const navigation = useNavigation();
+  const dispatch = useDispatch(); //створюємо портал
   useEffect(() => {
     if (route.params) {
       setPost((prevState) => {
@@ -29,8 +32,8 @@ export default function DefaultScreensPosts({ route }) {
   const userPhoto = dataBase.auth().currentUser.photoURL;
   const userEmail = dataBase.auth().currentUser.email;
 
-  const handleLogOut = () => {
-    navigation.navigate("login");
+  const handleSignOut = () => {
+    dispatch(authSignOutUser());
   };
 
   return (
@@ -44,7 +47,7 @@ export default function DefaultScreensPosts({ route }) {
             color={"#BDBDBD"}
             backgroundColor={"transparent"}
             header={20}
-            onPress={handleLogOut}
+            onPress={handleSignOut}
           />
         </View>
       </View>
