@@ -33,12 +33,14 @@ export default function RegistrationScreen() {
   const [isFocus, setIsFocus] = useState(initialIsFocus);
   const [isShowPassword, setIsShowPassword] = useState(false);
   const [isActive, setIsActive] = useState(false);
+  const [disabledBtn, setDisabledBtn] = useState(true);
 
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
   const handleFocus = (inputValue) => {
     setIsActive(true);
+    setDisabledBtn(false);
     setIsFocus((prevState) => ({ ...prevState, [inputValue]: true }));
   };
 
@@ -63,6 +65,7 @@ export default function RegistrationScreen() {
     Keyboard.dismiss(); // ховається клавіатура
     dispatch(authSignUpUser(state))
     setState(initialState); // скидаємо форму
+    setDisabledBtn(true);
   };
 
   const handleGoToLogin = () => {
@@ -175,7 +178,7 @@ export default function RegistrationScreen() {
               </View>
               {!isActive && (
                 <View>
-                  <Button onSubmit={handleSubmit} text="Register" />
+                  <Button onSubmit={handleSubmit} text="Register" disabledBtn={disabledBtn}/>
                   <Text style={styles.inAccount} onPress={handleGoToLogin}>
                     Already have an account? Log in
                   </Text>

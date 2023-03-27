@@ -1,9 +1,9 @@
 import PropTypes from "prop-types";
 import { Text, TouchableOpacity, StyleSheet } from "react-native";
 
-export const Button = ({ onSubmit, text }) => {
+export const Button = ({ onSubmit, text, disabledBtn }) => {
  return (
-    <TouchableOpacity style={styles.button}  onPress={onSubmit}>
+    <TouchableOpacity style={{...styles.button, backgroundColor: disabledBtn ? "#dcdcdc":"#FF6C00"}}  onPress={onSubmit} disabled={disabledBtn}>
       <Text style={styles.btnText}>{text}</Text>
     </TouchableOpacity>
   );

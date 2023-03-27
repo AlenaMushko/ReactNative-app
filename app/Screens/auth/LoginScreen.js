@@ -31,12 +31,14 @@ export default function LoginScreen() {
   const [isFocus, setIsFocus] = useState(initialIsFocus);
   const [isShowPassword, setIsShowPassword] = useState(false);
   const [isActive, setIsActive] = useState(false);
+  const [disabledBtn, setDisabledBtn] = useState(true);
 
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
   const handleFocus = (inputValue) => {
     setIsActive(true);
+    setDisabledBtn(false);
     setIsFocus((prevState) => ({ ...prevState, [inputValue]: true }));
   };
 
@@ -68,10 +70,8 @@ export default function LoginScreen() {
     setIsActive(false); // margin стає на початкове значення
     Keyboard.dismiss(); // ховається клавіатура
     dispatch(authSignInUser(state));
-    console.log('====================================');
-    console.log("stateLogin", state);
-    console.log('====================================');
     setState(initialState); // скидаємо форму
+    setDisabledBtn(true);
   };
 
   return (
@@ -141,7 +141,7 @@ export default function LoginScreen() {
 
                 {!isActive && (
                   <View>
-                    <Button onSubmit={handleSubmit}  text="Log In" />
+                    <Button onSubmit={handleSubmit}  text="Log In"  disabledBtn={disabledBtn}/>
                     <Text style={styles.inAccount} onPress={handleGoToRegister}>
                       Don't have an account? Register
                     </Text>

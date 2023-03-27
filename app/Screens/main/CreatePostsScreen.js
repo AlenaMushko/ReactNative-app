@@ -32,9 +32,11 @@ export default function CreatePostsScreen() {
   const [cameraType, setCameraType] = useState(Camera.Constants.Type.back);
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
+  const [disabledBtn, setDisabledBtn] = useState(true);
 
   const navigation = useNavigation();
-
+  // const {userId, login} = useSelector((state) => state.auth) //!------------
+  
   // щоб отримати дозвіл від користувача
   useEffect(() => {
     (async () => {
@@ -47,8 +49,8 @@ export default function CreatePostsScreen() {
         setErrorMsg("Permission to access location was denied");
         return;
       };
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location.coords);
+      // let location = await Location.getCurrentPositionAsync({});
+      // setLocation(location.coords);
     })();
   }, []);
 
@@ -65,10 +67,9 @@ export default function CreatePostsScreen() {
   const takePhoto = async () => {
     const photo = await camera.takePictureAsync();   
     let location = await Location.getCurrentPositionAsync({});
+    setDisabledBtn(false);
     setPhoto(photo.uri);
-  console.log("photoInfo", photoInfo);
-  console.log("location", location);
-  console.log("photo.uri", photo.uri);
+    setLocation(location.coords);
   };
 
   let text = "Waiting..";
@@ -91,20 +92,44 @@ export default function CreatePostsScreen() {
     const response = await fetch(photo);
     const file = await response.blob(); // формат для загрузки файлів з бази даних
     const uniquePostId = Date.now().toString();
-    console.log("uniquePostId", uniquePostId);
     await dataBase.storage().ref(`postImages/${uniquePostId}`).put(file); // в якому форматі і як зберігати фото
     const getPhoto = await dataBase.storage().ref("postImages").child(uniquePostId).getDownloadURL();
-      console.log("getPhoto", getPhoto);  //  firebase
+    return getPhoto;   //  firebase
   };
   
   // відправляти фото
   const sendPhoto = async () => {
-    uploadPhotoToServer();
+    uploadPostToServer();
     navigation.navigate("DefaultScreensPosts", { photo, photoInfo, location });
     Keyboard.dismiss(); // ховається клавіатура
     setPhotoInfo(initialPhotoInfo); // скидаємо форму
+    setDisabledBtn(true);
     setPhoto("");
   };
+console.log("disabledBtn", disabledBtn);
+  const handleDelPost = () => {
+    setPhoto("");
+    setPhotoInfo(null);
+    setDisabledBtn(true);
+  };
+
+  const uploadPostToServer = async()=>{
+    const photo = await uploadPhotoToServer();
+         //!---------------------------
+         console.log("photoInfo 1", photoInfo);
+         console.log("location 1", location.coords);
+         console.log("photo.uri 1", photo);
+            //!---------------------------
+    const createPost = await dataBase.firestore().collection("posts").add({photo, photoInfo, location, userId, login});
+    console.log('====================================');
+    console.log('createPost', createPost);
+    console.log('====================================');
+        //!---------------------------
+  console.log("photoInfo", photoInfo);
+  console.log("location", location.coords);
+  console.log("photo.uri", photo);
+     //!---------------------------
+  }
 
   const keyboard = useKeyboard();
 
@@ -207,12 +232,12 @@ export default function CreatePostsScreen() {
                 value={photoInfo.place}
               />
             </View>
-
-            <Button onSubmit={sendPhoto} text="Publish" />
-            <View style={styles.deletePost}>
+            <Button onSubmit={sendPhoto} text="Publish" disabledBtn={disabledBtn}/>
+            <View style={styles.deletePost} onPress={handleDelPost}>
               <Image
                 style={styles.delete}
                 source={require("../../assets/img/deletePost.png")}
+                onPress={handleDelPost}
               ></Image>
             </View>
           </View>
