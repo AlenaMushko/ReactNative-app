@@ -41,6 +41,15 @@ export default function CreatePostsScreen() {
       const { status } = await Camera.requestCameraPermissionsAsync();
       setHasPermission(status === "granted");
     })();
+    (async ()=>{
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        setErrorMsg("Permission to access location was denied");
+        return;
+      };
+      let location = await Location.getCurrentPositionAsync({});
+      setLocation(location.coords);
+    })();
   }, []);
 
   const handleArrow = () => {
@@ -54,16 +63,12 @@ export default function CreatePostsScreen() {
 
   // робити фото
   const takePhoto = async () => {
-    const photo = await camera.takePictureAsync();
-
-    let { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== "granted") {
-      setErrorMsg("Permission to access location was denied");
-      return;
-    }
+    const photo = await camera.takePictureAsync();   
     let location = await Location.getCurrentPositionAsync({});
     setPhoto(photo.uri);
-    setLocation(location.coords);
+  console.log("photoInfo", photoInfo);
+  console.log("location", location);
+  console.log("photo.uri", photo.uri);
   };
 
   let text = "Waiting..";
@@ -81,7 +86,6 @@ export default function CreatePostsScreen() {
         : Camera.Constants.Type.back
     );
   };
-
   // обновляти фото
   const uploadPhotoToServer = async () => {
     const response = await fetch(photo);
@@ -90,14 +94,12 @@ export default function CreatePostsScreen() {
     console.log("uniquePostId", uniquePostId);
     await dataBase.storage().ref(`postImages/${uniquePostId}`).put(file); // в якому форматі і як зберігати фото
     const getPhoto = await dataBase.storage().ref("postImages").child(uniquePostId).getDownloadURL();
-      console.log("getPhoto", getPhoto);
+      console.log("getPhoto", getPhoto);  //  firebase
   };
-
-
+  
   // відправляти фото
   const sendPhoto = async () => {
     uploadPhotoToServer();
-    console.log("photo");
     navigation.navigate("DefaultScreensPosts", { photo, photoInfo, location });
     Keyboard.dismiss(); // ховається клавіатура
     setPhotoInfo(initialPhotoInfo); // скидаємо форму

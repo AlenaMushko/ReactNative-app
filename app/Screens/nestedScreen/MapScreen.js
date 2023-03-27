@@ -44,7 +44,7 @@ export default function MapScreen({ route }) {
           Region={{
             latitude: locationObj.location.latitude,
             longitude: locationObj.location.longitude,
-            latitudeDelta: 0.001,
+            latitudeDelta: 0.1,
             longitudeDelta: 0.006,
           }}
         >
