@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+
 import {
   StyleSheet,
   Text,
@@ -13,6 +14,9 @@ import { useNavigation } from "@react-navigation/native";
 import { Camera } from "expo-camera";
 import { useKeyboard } from "@react-native-community/hooks";
 import * as Location from "expo-location";
+import { useSelector } from "react-redux";
+import { collection, addDoc, doc, setDoc,  getFirestore } from "firebase/firestore";
+
 
 import Button from "../../Components/Button";
 import Container from "../../Components/Container";
@@ -23,6 +27,11 @@ const initialPhotoInfo = {
   name: "",
   place: "",
 };
+
+//!--------------
+// const fireStore = getFirestore(dataBase);
+// console.log(fireStore);
+//!--------------------
 
 export default function CreatePostsScreen() {
   const [photoInfo, setPhotoInfo] = useState(initialPhotoInfo);
@@ -35,22 +44,20 @@ export default function CreatePostsScreen() {
   const [disabledBtn, setDisabledBtn] = useState(true);
 
   const navigation = useNavigation();
-  // const {userId, login} = useSelector((state) => state.auth) //!------------
-  
+  const { userId, login } = useSelector((state) => state.auth); 
+
   // щоб отримати дозвіл від користувача
   useEffect(() => {
     (async () => {
       const { status } = await Camera.requestCameraPermissionsAsync();
       setHasPermission(status === "granted");
     })();
-    (async ()=>{
+    (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
         setErrorMsg("Permission to access location was denied");
         return;
-      };
-      // let location = await Location.getCurrentPositionAsync({});
-      // setLocation(location.coords);
+      }
     })();
   }, []);
 
@@ -65,7 +72,7 @@ export default function CreatePostsScreen() {
 
   // робити фото
   const takePhoto = async () => {
-    const photo = await camera.takePictureAsync();   
+    const photo = await camera.takePictureAsync();
     let location = await Location.getCurrentPositionAsync({});
     setDisabledBtn(false);
     setPhoto(photo.uri);
@@ -87,49 +94,73 @@ export default function CreatePostsScreen() {
         : Camera.Constants.Type.back
     );
   };
-  // обновляти фото
-  const uploadPhotoToServer = async () => {
-    const response = await fetch(photo);
-    const file = await response.blob(); // формат для загрузки файлів з бази даних
-    const uniquePostId = Date.now().toString();
-    await dataBase.storage().ref(`postImages/${uniquePostId}`).put(file); // в якому форматі і як зберігати фото
-    const getPhoto = await dataBase.storage().ref("postImages").child(uniquePostId).getDownloadURL();
-    return getPhoto;   //  firebase
-  };
-  
+
   // відправляти фото
-  const sendPhoto = async () => {
-    uploadPostToServer();
+  const sendPhoto = () => {
+    // uploadPostToServer();
     navigation.navigate("DefaultScreensPosts", { photo, photoInfo, location });
     Keyboard.dismiss(); // ховається клавіатура
     setPhotoInfo(initialPhotoInfo); // скидаємо форму
     setDisabledBtn(true);
     setPhoto("");
   };
-console.log("disabledBtn", disabledBtn);
+  console.log("disabledBtn", disabledBtn);
   const handleDelPost = () => {
     setPhoto("");
     setPhotoInfo(null);
     setDisabledBtn(true);
   };
 
-  const uploadPostToServer = async()=>{
+  // обновляти фото
+  const uploadPhotoToServer = async () => {
+    const response = await fetch(photo);
+    const file = await response.blob(); // формат для загрузки файлів з бази даних
+    const uniquePostId = Date.now().toString();
+
+    await dataBase.storage().ref(`postImages/${uniquePostId}`).put(file); // в якому форматі і як зберігати фото
+    const getPhoto = await dataBase
+      .storage()
+      .ref("postImages")
+      .child(uniquePostId)
+      .getDownloadURL();
+    return getPhoto; //  firebase
+  };
+
+  const uploadPostToServer = async () => {
     const photo = await uploadPhotoToServer();
-         //!---------------------------
-         console.log("photoInfo 1", photoInfo);
-         console.log("location 1", location.coords);
-         console.log("photo.uri 1", photo);
-            //!---------------------------
-    const createPost = await dataBase.firestore().collection("posts").add({photo, photoInfo, location, userId, login});
-    console.log('====================================');
-    console.log('createPost', createPost);
-    console.log('====================================');
-        //!---------------------------
-  console.log("photoInfo", photoInfo);
-  console.log("location", location.coords);
-  console.log("photo.uri", photo);
-     //!---------------------------
-  }
+    // const uniquePostId = Date.now().toString();
+    try{
+      // const createPost = await setDoc(doc(dataBase, "postImages", "uniquePostId"),{
+      //   photo: photo,
+      //   post: photoInfo,
+      //   location: location,
+      //   userId: userId,
+      //   userName: login,
+      // });
+     
+      // const createPost = await addDoc(collection(dataBase, "postImages"), {
+      //   photo: photo,
+      //   post: photoInfo,
+      //   location: location,
+      //   userId: userId,
+      //   userName: login,
+      // });
+      const createPost = await addDoc(collection(fireStore, "posts"), {
+        photo: photo,
+        post: photoInfo,
+        location: location,
+        userId: userId,
+        userName: login,
+      });
+      console.log("====================================");
+      console.log("createPost", createPost);
+      console.log("====================================");
+    } catch(error){
+      console.log(error);
+      console.log(error.massage);
+    }
+    
+  };
 
   const keyboard = useKeyboard();
 
@@ -232,7 +263,11 @@ console.log("disabledBtn", disabledBtn);
                 value={photoInfo.place}
               />
             </View>
-            <Button onSubmit={sendPhoto} text="Publish" disabledBtn={disabledBtn}/>
+            <Button
+              onSubmit={sendPhoto}
+              text="Publish"
+              disabledBtn={disabledBtn}
+            />
             <View style={styles.deletePost} onPress={handleDelPost}>
               <Image
                 style={styles.delete}
@@ -349,3 +384,6 @@ const styles = StyleSheet.create({
     borderColor: "#E8E8E8",
   },
 });
+
+
+
