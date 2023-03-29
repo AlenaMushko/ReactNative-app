@@ -15,19 +15,27 @@ import dataBase from "../../firebase/config";
 import { authSignOutUser } from "../redux/auth/authOperations";
 import { useDispatch } from "react-redux";
 
+
 export default function DefaultScreensPosts({ route }) {
   // route приймаємо фото і опис
   const [post, setPost] = useState([]);
   const navigation = useNavigation();
   const dispatch = useDispatch(); //створюємо портал
-  useEffect(() => {
-    if (route.params) {
-      setPost((prevState) => {
-        return [...prevState, route.params];
-      });
-    }
-  }, [route.params]);
 
+  const getAllPost = async () => {
+    const postRef = await dataBase
+      .firestore()
+      .collection("posts")
+      .onSnapshot((data) => setPost(data.docs.map((doc) => ({ ...doc.data(), id: doc.id }))));
+  };
+
+  useEffect(() => {
+  getAllPost();
+  }, []);
+
+  console.log('====================================');
+  console.log("post Coment", post);
+  console.log('====================================');
   const userLogin = dataBase.auth().currentUser.displayName;
   const userPhoto = dataBase.auth().currentUser.photoURL;
   const userEmail = dataBase.auth().currentUser.email;

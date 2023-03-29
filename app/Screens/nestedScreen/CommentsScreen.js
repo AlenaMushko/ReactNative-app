@@ -5,8 +5,10 @@ import {
   StyleSheet,
   Text,
   View,
+  TextInput
 } from "react-native";
 import Container from "../../Components/Container";
+import Button from "../../Components/Button";
 
 
 export default function CommentsScreen() {
@@ -31,6 +33,31 @@ export default function CommentsScreen() {
             <Text style={styles.textHeader}>Posts</Text>
           </View>
           </View>
+          <View style={styles.location}>
+              <Image
+                style={styles.geolocation}
+                source={require("../../assets/img/geolocation.png")}
+              ></Image>
+
+              <TextInput
+                style={{ ...styles.title, ...styles.input, marginLeft: 32 }}
+                keyboardType="default"
+                placeholder="Place..."
+                placeholderTextColor="#BDBDBD"
+                onChangeText={(value) =>
+                  setPhotoInfo((prevState) => ({
+                    ...prevState,
+                    place: value,
+                  }))
+                }
+                value={photoInfo.place}
+              />
+            </View>
+            <Button
+              onSubmit={sendPhoto}
+              text="Publish"
+              disabledBtn={false}
+            />
       </Container>
       )
   }

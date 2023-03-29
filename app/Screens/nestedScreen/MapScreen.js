@@ -41,10 +41,10 @@ export default function MapScreen({ route }) {
       {locationObj && (
         <MapView
           style={styles.map}
-          Region={{
+         initialRegion={{
             latitude: locationObj.location.latitude,
             longitude: locationObj.location.longitude,
-            latitudeDelta: 0.1,
+            latitudeDelta: 0.01,
             longitudeDelta: 0.006,
           }}
         >

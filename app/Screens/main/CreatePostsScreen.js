@@ -125,18 +125,7 @@ export default function CreatePostsScreen() {
         .firestore()
         .collection("posts")
         .doc()
-     
-        createPost.set({ photo, photoInfo, location, userId, login});
-
-      const postRef = dataBase.firestore().collection("postImg").doc("BJ");
-      // const setWithMerge = postRef.set(
-      //   {
-      //     capital: true,
-      //   },
-      //   { merge: true }
-      // );
-
-      console.log("createPost", createPost);
+     .set({ photo, photoInfo, location, userId, login});
     } catch (error) {
       console.log(error);
       console.log(error.massage);
