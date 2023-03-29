@@ -78,7 +78,7 @@ export default function DefaultScreensPosts({ route }) {
           <FlatList
             data={post}
             keyExtractor={(item, index) => index.toString()}
-            renderItem={({ item: { photoInfo, location, photo } }) => (
+            renderItem={({ item: { photoInfo, location, photo, id } }) => (
               <View style={{ paddingTop: 32 }}>
                 <Image source={{ uri: photo }} style={styles.postImage} />
                 <Text style={styles.postName}>{photoInfo.name}</Text>
@@ -87,7 +87,7 @@ export default function DefaultScreensPosts({ route }) {
                   <View style={styles.postComment}>
                     <TouchableOpacity
                       onPress={() => {
-                        navigation.navigate("CommentsScreen");
+                        navigation.navigate("CommentsScreen", {postId: id});
                       }}
                     >
                       <EvilIcons name="comment" size={24} color="#BDBDBD" />
