@@ -15,9 +15,6 @@ import { Camera } from "expo-camera";
 import { useKeyboard } from "@react-native-community/hooks";
 import * as Location from "expo-location";
 import { useSelector } from "react-redux";
-import { collection, addDoc, doc, setDoc,  getFirestore } from "firebase/firestore";
-
-
 import Button from "../../Components/Button";
 import Container from "../../Components/Container";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -27,11 +24,6 @@ const initialPhotoInfo = {
   name: "",
   place: "",
 };
-
-//!--------------
-// const fireStore = getFirestore(dataBase);
-// console.log(fireStore);
-//!--------------------
 
 export default function CreatePostsScreen() {
   const [photoInfo, setPhotoInfo] = useState(initialPhotoInfo);
@@ -44,7 +36,7 @@ export default function CreatePostsScreen() {
   const [disabledBtn, setDisabledBtn] = useState(true);
 
   const navigation = useNavigation();
-  const { userId, login } = useSelector((state) => state.auth); 
+  const { userId, login } = useSelector((state) => state.auth);
 
   // щоб отримати дозвіл від користувача
   useEffect(() => {
@@ -97,14 +89,14 @@ export default function CreatePostsScreen() {
 
   // відправляти фото
   const sendPhoto = () => {
-    // uploadPostToServer();
+    uploadPostToServer();
     navigation.navigate("DefaultScreensPosts", { photo, photoInfo, location });
     Keyboard.dismiss(); // ховається клавіатура
     setPhotoInfo(initialPhotoInfo); // скидаємо форму
     setDisabledBtn(true);
     setPhoto("");
   };
-  console.log("disabledBtn", disabledBtn);
+
   const handleDelPost = () => {
     setPhoto("");
     setPhotoInfo(null);
@@ -128,38 +120,27 @@ export default function CreatePostsScreen() {
 
   const uploadPostToServer = async () => {
     const photo = await uploadPhotoToServer();
-    // const uniquePostId = Date.now().toString();
-    try{
-      // const createPost = await setDoc(doc(dataBase, "postImages", "uniquePostId"),{
-      //   photo: photo,
-      //   post: photoInfo,
-      //   location: location,
-      //   userId: userId,
-      //   userName: login,
-      // });
+    try {
+      const createPost = await dataBase
+        .firestore()
+        .collection("posts")
+        .doc()
      
-      // const createPost = await addDoc(collection(dataBase, "postImages"), {
-      //   photo: photo,
-      //   post: photoInfo,
-      //   location: location,
-      //   userId: userId,
-      //   userName: login,
-      // });
-      const createPost = await addDoc(collection(fireStore, "posts"), {
-        photo: photo,
-        post: photoInfo,
-        location: location,
-        userId: userId,
-        userName: login,
-      });
-      console.log("====================================");
+        createPost.set({ photo, photoInfo, location, userId, login});
+
+      const postRef = dataBase.firestore().collection("postImg").doc("BJ");
+      // const setWithMerge = postRef.set(
+      //   {
+      //     capital: true,
+      //   },
+      //   { merge: true }
+      // );
+
       console.log("createPost", createPost);
-      console.log("====================================");
-    } catch(error){
+    } catch (error) {
       console.log(error);
       console.log(error.massage);
     }
-    
   };
 
   const keyboard = useKeyboard();
@@ -384,6 +365,3 @@ const styles = StyleSheet.create({
     borderColor: "#E8E8E8",
   },
 });
-
-
-

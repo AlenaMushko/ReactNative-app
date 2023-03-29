@@ -32,7 +32,7 @@ stateChange: payload.stateChange,
   }),
   },
 });
-console.log("authSlice", authSlice);
+
 export const userSelector = (state) => state.auth;
 // Action creators are generated for each case reducer function
 export const {updateUserProfile, authStateChange, authSignOut} = authSlice.actions;

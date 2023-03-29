@@ -24,7 +24,7 @@
     "expo-splash-screen": "~0.17.5",
     "expo-status-bar": "~1.4.4",
     "file-loader": "^6.2.0",
-    "firebase": "^7.09.0",
+    "firebase": "^8.10.0",
     "react": "18.1.0",
     "react-native": "0.70.5",
     "react-native-gesture-handler": "~2.8.0",

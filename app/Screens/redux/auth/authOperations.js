@@ -53,15 +53,13 @@ const authStateChangeUser = () => async (dispatch, getState) => {
   try {
     await dataBase.auth().onAuthStateChanged((user) => {
       if (user) {
-        console.log("user Operation", user);
         const userUpdateProfile = {
           userId: user.uid,
           login: user.displayName,
           userPhoto: user.photoURL,
         };
 
-        dispatch(authStateChange({ stateChange: true })); //якщо є зарєєстрований користувач, то автоматично входимо
-        console.log("dispatch stateChange", user);
+        dispatch(authStateChange({ stateChange: true })); //якщо є зарєєстрований користувач, то автоматично входим
         dispatch(updateUserProfile(userUpdateProfile));
       }
     });

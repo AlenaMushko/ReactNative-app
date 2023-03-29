@@ -8,7 +8,6 @@ export default function Main() {
   const dispatch = useDispatch();
 
  const  stateChange  = useSelector((state) => state.auth.stateChange);
-  console.log("stateChange", stateChange);
   
   useEffect(() => {
     dispatch(authStateChangeUser());
