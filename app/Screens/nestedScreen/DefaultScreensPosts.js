@@ -6,11 +6,12 @@ import {
   Image,
   FlatList,
   TouchableOpacity,
+  SafeAreaView
 } from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import EvilIcons from "@expo/vector-icons/EvilIcons";
 import { useNavigation } from "@react-navigation/native";
 import Container from "../../Components/Container";
-import EvilIcons from "@expo/vector-icons/EvilIcons";
 import dataBase from "../../firebase/config";
 import { authSignOutUser } from "../redux/auth/authOperations";
 import { useDispatch } from "react-redux";
@@ -33,9 +34,9 @@ export default function DefaultScreensPosts({ route }) {
   getAllPost();
   }, []);
 
-  console.log('====================================');
-  console.log("post Coment", post);
-  console.log('====================================');
+  // console.log('====================================');
+  // console.log("post Coment", post);
+  // console.log('====================================');
   const userLogin = dataBase.auth().currentUser.displayName;
   const userPhoto = dataBase.auth().currentUser.photoURL;
   const userEmail = dataBase.auth().currentUser.email;
@@ -73,7 +74,7 @@ export default function DefaultScreensPosts({ route }) {
           </View>
         </View>
       </View>
-      <View style={styles.postMap}>
+      <SafeAreaView style={styles.postMap}>
         {post && (
           <FlatList
             data={post}
@@ -122,7 +123,7 @@ export default function DefaultScreensPosts({ route }) {
             )}
           />
         )}
-      </View>
+   </SafeAreaView>
     </Container>
   );
 }

@@ -1,8 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View, ImageBackground, Image } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  ImageBackground,
+  Image,
+  SafeAreaView,
+  FlatList,
+  TouchableOpacity,
+} from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import { useNavigation } from "@react-navigation/native";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import EvilIcons from "@expo/vector-icons/EvilIcons";
+import { Entypo } from '@expo/vector-icons';
 import AddUserIcon from "../../assets/svg/addUserIcon";
 import Container from "../../Components/Container";
 import { authSignOutUser } from "../redux/auth/authOperations";
@@ -10,7 +20,8 @@ import dataBase from "../../firebase/config";
 
 export default function ProfileScreen({ route }) {
   const [post, setPost] = useState([]);
-  const navigation = useNavigation();
+  const [userPosts, setUserPosts] = useState([]);
+  const userId = useSelector((state) => state.auth.userId);
   const dispatch = useDispatch(); //створюємо портал
 
   useEffect(() => {
@@ -19,6 +30,10 @@ export default function ProfileScreen({ route }) {
     }
   }, [route.params]);
 
+  useEffect(() => {
+    getUserPosts();
+  }, []);
+
   const handleSignOut = () => {
     dispatch(authSignOutUser());
   };
@@ -26,6 +41,15 @@ export default function ProfileScreen({ route }) {
   const userLogin = dataBase.auth().currentUser.displayName;
   const userPhoto = dataBase.auth().currentUser.photoURL;
 
+  const getUserPosts = async () => {
+    await dataBase
+      .firestore()
+      .collection("posts")
+      .where("userId", "==", userId)
+      .onSnapshot((data) =>
+        setUserPosts(data.docs.map((doc) => ({ ...doc.data() })))
+      );
+  };
   return (
     <Container>
       <ImageBackground
@@ -33,7 +57,8 @@ export default function ProfileScreen({ route }) {
         source={require("../../assets/img/BGbgMountains.png")}
       >
         <View style={styles.box}>
-          <View style={styles.userPhoto}>
+          <View style={{  alignItems: "center",}}>
+           <View style={styles.userPhoto}>
             <ImageBackground
               style={styles.imgBg}
               source={require("../../assets/img/user.png")}
@@ -56,7 +81,77 @@ export default function ProfileScreen({ route }) {
               onPress={handleSignOut}
             />
           </View>
-          <Text style={styles.title}>{userLogin}</Text>
+          <Text style={styles.title}>{userLogin}</Text>  
+          </View>
+         
+       
+
+        <SafeAreaView style={styles.postMap}>
+          <FlatList
+            data={userPosts}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({ item: { photoInfo, location, photo, id } }) => (
+              <View style={{ paddingTop: 32 }}>
+                <Image source={{ uri: photo }} style={styles.postImage} />
+                <Text style={styles.postName}>{photoInfo.name}</Text>
+
+                <View style={styles.postWrap}>
+                  <View style={styles.postComment}>
+                    <TouchableOpacity
+                      onPress={() => {
+                        navigation.navigate("CommentsScreen", { postId: id });
+                      }}
+                    >
+                      <Entypo name="message" size={24} color="#FF6C00" />
+                    </TouchableOpacity>
+                    <Text
+                      style={{
+                        ...styles.postText,
+                        ...styles.postNumberComment,
+                      }}
+                    >
+                      0
+                    </Text>
+                  </View>
+
+                  <View style={{...styles.postComment, marginLeft:27}}>
+                    <TouchableOpacity
+                      // onPress={() => {
+                      //   navigation.navigate("CommentsScreen", { postId: id });
+                      // }}
+                    >
+                      <AntDesign name="like1" size={24} color="#FF6C00" />
+                    </TouchableOpacity>
+                    <Text
+                      style={{
+                        ...styles.postText,
+                        ...styles.postNumberComment,
+                      }}
+                    >
+                      0
+                    </Text>
+                  </View>
+
+                  <View style={styles.geolocation}>
+                    <TouchableOpacity
+                      onPress={() =>
+                        navigation.navigate("MapScreen", { location })
+                      }
+                    >
+                      <Image
+                        style={styles.geolocationSvg}
+                        source={require("../../assets/img/geolocation.png")}
+                      ></Image>
+                    </TouchableOpacity>
+                    <Text style={{ ...styles.postText, ...styles.postPlace }}>
+                      {photoInfo.place}
+                    </Text>
+                  </View>
+                </View>
+              </View>
+            )}
+          />
+        </SafeAreaView>
         </View>
       </ImageBackground>
     </Container>
@@ -77,7 +172,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
-    alignItems: "center",
+  
     //   justifyContent: "center",
     position: "relative",
     marginTop: 147,
@@ -106,5 +201,56 @@ const styles = StyleSheet.create({
     letterSpacing: 0.01,
     lineHeight: 35,
     marginTop: 92,
+  },
+
+
+  postMap: {
+    flex: 1,
+    justifyContent: "center",
+    paddingHorizontal: 16,
+  },
+  postImage: {
+    height: 240,
+    borderRadius: 8,
+  },
+  postName: {
+    marginTop: 8,
+    fontFamily: "Roboto_Medium",
+    fontSize: 16,
+    lineHeight: 19,
+    color: "#212121",
+  },
+  postWrap: {
+    marginTop: 8,
+    flexDirection: "row",
+  },
+  postComment: {
+    flexDirection: "row",
+  },
+  postNumberComment: {
+    color: "#BDBDBD",
+    marginLeft: 8,
+  },
+  geolocation: {
+    position: "absolute",
+    right: 0,
+    bottom: 0,
+    flexDirection: "row",
+    borderBottomWidth: 1,
+    borderBottomColor: "#E8E8E8",
+  },
+  geolocationSvg: {
+    width: 24,
+    height: 24,
+    color: "#BDBDBD",
+    marginRight: 8,
+  },
+  postText: {
+    fontFamily: "Roboto_Regular",
+    fontSize: 16,
+    lineHeight: 19,
+  },
+  postPlace: {
+    color: "#212121",
   },
 });
