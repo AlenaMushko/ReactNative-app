@@ -264,12 +264,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#BDBDBD",
   },
-  title: {
-    fontFamily: "Roboto_Medium",
-    fontSize: 17,
-    lineHeight: 22,
-    color: "#212121",
-  },
   arrowBtn: {
     position: "absolute",
     left: 16,
