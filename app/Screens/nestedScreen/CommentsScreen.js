@@ -27,26 +27,22 @@ export default function CommentsScreen({ route }) {
   console.log("postId", postId, nickName);
   // створюємо колекцію коментарів
   const createComment = async () => {
-    const commentToDB = await dataBase
+    // const commentToDB = await
+    dataBase
       .firestore()
       .collection("posts")
-      .doc(postId);
-    console.log("====================================");
-    console.log("commentToDB", commentToDB);
-    const commentFromDB = await dataBase
-    .firestore().collection("comments").add({
-      comment,
-      nickName,
-    });
-    console.log("====================================");
-    console.log("commentFromDB", commentFromDB);
+      .doc(postId)
+      .collection("comments")
+      .add({
+        newComment,
+        nickName,
+      });
   };
 
   const handleArrow = () => {
     navigation.navigate("DefaultScreensPosts");
   };
 
-  const handleSetComment = () => {};
   return (
     <Container>
       <View style={styles.header}>
