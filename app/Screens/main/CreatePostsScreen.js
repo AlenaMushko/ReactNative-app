@@ -99,7 +99,7 @@ export default function CreatePostsScreen() {
 
   const handleDelPost = () => {
     setPhoto("");
-    setPhotoInfo(null);
+    setPhotoInfo(initialPhotoInfo);
     setDisabledBtn(true);
   };
 

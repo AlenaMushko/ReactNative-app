@@ -6,7 +6,8 @@ import {
   Image,
   FlatList,
   TouchableOpacity,
-  SafeAreaView
+  SafeAreaView, 
+  Alert
 } from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import EvilIcons from "@expo/vector-icons/EvilIcons";
@@ -66,6 +67,12 @@ getAllPost();
   const handleSignOut = () => {
     dispatch(authSignOutUser());
   };
+
+  const createAlert = () =>
+  Alert.alert('Booking Success', '', [
+    { text: 'Close' },
+    { text: 'View Details', onPress: () => console.log('test') },
+  ]);
 
   return (
     <Container>
@@ -127,8 +134,10 @@ getAllPost();
 
                   <View style={styles.geolocation}>
                     <TouchableOpacity
-                      onPress={() =>
-                        navigation.navigate("MapScreen", { location })
+                      onPress={() =>{
+                        createAlert();
+                        navigation.navigate("MapScreen", { location });
+                      }
                       }
                     >
                       <Image

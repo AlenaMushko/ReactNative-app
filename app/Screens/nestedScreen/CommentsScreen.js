@@ -1,6 +1,6 @@
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useNavigation } from "@react-navigation/native";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -10,12 +10,14 @@ import {
   Image,
   SafeAreaView,
   KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
+import { useSelector } from "react-redux";
 import { useKeyboard } from "@react-native-community/hooks";
 import Container from "../../Components/Container";
 import { Ionicons } from "@expo/vector-icons";
 import dataBase from "../../firebase/config";
-import { useSelector } from "react-redux";
 
 export default function CommentsScreen({ route }) {
   const [newComment, setNewComment] = useState("");
@@ -28,6 +30,7 @@ export default function CommentsScreen({ route }) {
   const keyboard = useKeyboard();
 
   useEffect(() => {
+    // setTimeout(1000, () => SplashScreen.hide());
     getAllPosts();
     getUserPosts();
   }, []);
@@ -96,11 +99,17 @@ export default function CommentsScreen({ route }) {
     navigation.navigate("DefaultScreensPosts");
   };
 
+  const handleCreatePost = ()=>{
+    createComment();
+    Keyboard.dismiss();
+    setNewComment('');
+  }
   // console.log('====================================');
   // console.log("allComments", allComments.length);
 
   return (
-    <Container>
+
+<Container>
       <View style={styles.header}>
         <Text style={styles.title}>Comments</Text>
         <View style={styles.goToPosts}>
@@ -119,9 +128,11 @@ export default function CommentsScreen({ route }) {
       <View style={styles.commentsScreen}>
         {!keyboard.keyboardShown && (
           <>
-            <View style={{ marginTop: 32 }}>
-              <Image source={{ uri: postPhoto }} style={styles.commentImg} />
-            </View>
+            {postPhoto && (
+              <View style={{ marginTop: 32 }}>
+                <Image source={{ uri: postPhoto }} style={styles.commentImg} />
+              </View>
+            )}
 
             <SafeAreaView style={styles.containerComments}>
               <FlatList
@@ -140,30 +151,34 @@ export default function CommentsScreen({ route }) {
             </SafeAreaView>
           </>
         )}
-
+    </View>
         <KeyboardAvoidingView
           behavior={Platform.OS == "ios" ? "padding" : "height"}
         >
-          <View style={{ position: "relative" }}>
+           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                   <View style={{ position: "relative" }}>
             <TextInput
               style={{ ...styles.title, ...styles.input, marginLeft: 32 }}
               keyboardType="default"
               placeholder="Comment..."
               placeholderTextColor="#BDBDBD"
+              value={newComment}
               onChangeText={setNewComment}
             />
-            <View style={styles.arrow} onPress={createComment}>
+            <View style={styles.arrow} >
               <Ionicons
                 name="md-arrow-up-circle-sharp"
                 size={44}
                 color="#FF6C00"
-                onPress={createComment}
+                onPress={handleCreatePost}
               />
             </View>
-          </View>
+          </View>   
+           </TouchableWithoutFeedback>
+
         </KeyboardAvoidingView>
-      </View>
-    </Container>
+  
+    </Container>    
   );
 }
 
