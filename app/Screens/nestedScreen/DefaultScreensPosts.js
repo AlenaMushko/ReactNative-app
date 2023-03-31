@@ -17,26 +17,48 @@ import { authSignOutUser } from "../redux/auth/authOperations";
 import { useDispatch } from "react-redux";
 
 
-export default function DefaultScreensPosts({ route }) {
-  // route приймаємо фото і опис
+export default function DefaultScreensPosts() {
   const [post, setPost] = useState([]);
   const navigation = useNavigation();
   const dispatch = useDispatch(); //створюємо портал
 
-  const getAllPost = async () => {
-    const postRef = await dataBase
-      .firestore()
-      .collection("posts")
-      .onSnapshot((data) => setPost(data.docs.map((doc) => ({ ...doc.data(), id: doc.id }))));
-  };
 
-  useEffect(() => {
-  getAllPost();
-  }, []);
+//=========================================
+const [allComments, setAllComments] = useState([]);
 
-  // console.log('====================================');
-  // console.log("post Coment", post);
-  // console.log('====================================');
+useEffect(() => {
+  getAllComments();
+}, []);
+
+const getAllComments = async () => {
+ const AllComments=  dataBase
+    .firestore()
+    // .collection("posts")
+    // .doc(postId)
+    .collection("comments")
+    .onSnapshot((data) =>
+      setAllComments(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+    );
+    console.log("DefaultScreensPosts allComments", allComments);
+};
+
+
+// console.log('====================================');
+// console.log("allComments", allComments.length);
+
+//=========================================
+const getAllPost = async () => {
+  const postRef = await dataBase
+    .firestore()
+    .collection("posts")
+    .onSnapshot((data) => setPost(data.docs.map((doc) => ({ ...doc.data(), id: doc.id }))));
+};
+
+useEffect(() => {
+getAllPost();
+}, []);
+// console.log('====================================');
+// console.log("post Coment", post[0]);
   const userLogin = dataBase.auth().currentUser.displayName;
   const userPhoto = dataBase.auth().currentUser.photoURL;
   const userEmail = dataBase.auth().currentUser.email;
@@ -80,7 +102,7 @@ export default function DefaultScreensPosts({ route }) {
             data={post}
             keyExtractor={(item, index) => index.toString()}
             renderItem={({ item: { photoInfo, location, photo, id } }) => (
-              <View style={{ paddingTop: 32 }}>
+              <View style={{ paddingTop: 32, paddingHorizontal:16 }}>
                 <Image source={{ uri: photo }} style={styles.postImage} />
                 <Text style={styles.postName}>{photoInfo.name}</Text>
 

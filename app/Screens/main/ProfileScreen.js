@@ -13,16 +13,19 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import { useDispatch, useSelector } from "react-redux";
 import EvilIcons from "@expo/vector-icons/EvilIcons";
 import { Entypo } from '@expo/vector-icons';
+import { useNavigation } from "@react-navigation/native";
 import AddUserIcon from "../../assets/svg/addUserIcon";
 import Container from "../../Components/Container";
 import { authSignOutUser } from "../redux/auth/authOperations";
 import dataBase from "../../firebase/config";
+
 
 export default function ProfileScreen({ route }) {
   const [post, setPost] = useState([]);
   const [userPosts, setUserPosts] = useState([]);
   const userId = useSelector((state) => state.auth.userId);
   const dispatch = useDispatch(); //створюємо портал
+  const navigation = useNavigation();
 
   useEffect(() => {
     if (route.params) {
@@ -83,9 +86,6 @@ export default function ProfileScreen({ route }) {
           </View>
           <Text style={styles.title}>{userLogin}</Text>  
           </View>
-         
-       
-
         <SafeAreaView style={styles.postMap}>
           <FlatList
             data={userPosts}

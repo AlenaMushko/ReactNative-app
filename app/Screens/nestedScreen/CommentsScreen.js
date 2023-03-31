@@ -31,18 +31,18 @@ export default function CommentsScreen({ route }) {
     getAllPosts();
     getUserPosts();
   }, []);
- 
 
   const getUserPosts = async () => {
     await dataBase
       .firestore()
       .collection("posts")
-      .where("userId", "==", userId)
-      .onSnapshot((data) =>
-      setPostPhoto(data.docs.map((doc) => ({ ...doc.data() })))
-      );
+      .doc(postId)
+      .get()
+      .then((doc) => {
+        const comment = doc.data().photo;
+        setPostPhoto(comment);
+      });
   };
-console.log("post photo", postPhoto);
 
   const PostDate = () => {
     const currentDate = new Date(); // створення об'єкту Date з поточного часу
@@ -96,6 +96,9 @@ console.log("post photo", postPhoto);
     navigation.navigate("DefaultScreensPosts");
   };
 
+  // console.log('====================================');
+  // console.log("allComments", allComments.length);
+
   return (
     <Container>
       <View style={styles.header}>
@@ -116,7 +119,10 @@ console.log("post photo", postPhoto);
       <View style={styles.commentsScreen}>
         {!keyboard.keyboardShown && (
           <>
-            {/* <Image source={{ uri: photo }} style={styles.commentImg} /> */}
+            <View style={{ marginTop: 32 }}>
+              <Image source={{ uri: postPhoto }} style={styles.commentImg} />
+            </View>
+
             <SafeAreaView style={styles.containerComments}>
               <FlatList
                 data={allComments}
@@ -200,7 +206,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   commentImg: {
-    marginTop: 32,
+    height: 240,
+    borderRadius: 8,
   },
   containerComments: {
     flex: 1,
