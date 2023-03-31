@@ -63,10 +63,6 @@ export default function LoginScreen() {
       return;
     }                                               //!
     navigation.navigate('home'); 
-    // navigation.navigate("home", {
-    //   screen: 'PostsScreen',
-    //   params: { state },
-    // });
     setIsActive(false); // margin стає на початкове значення
     Keyboard.dismiss(); // ховається клавіатура
     dispatch(authSignInUser(state));
