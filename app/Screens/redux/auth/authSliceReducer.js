@@ -5,36 +5,36 @@ const initialState = {
   login: null,
   email: null,
   userPhoto: null,
-  stateChange:false,
+  stateChange: false,
 };
 
 export const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    updateUserProfile:(state,{payload})=>({
-      ...state, 
+    updateUserProfile: (state, { payload }) => ({
+      ...state,
       userId: payload.userId,
-     login: payload.login,
-  //   email:payload.email,
-  userPhoto:payload.userPhoto,
-}),
-  authStateChange:(state, {payload})=>({
-    ...state,
-stateChange: payload.stateChange,
-  }),
-   authSignOut: ()=>({
-    userId: null,
-    login: null,
-    email: null,
-    userPhoto: null,
-    stateChange:false,
-  }),
+      login: payload.login,
+      userPhoto: payload.userPhoto,
+    }),
+    authStateChange: (state, { payload }) => ({
+      ...state,
+      stateChange: payload.stateChange,
+    }),
+    authSignOut: () => ({
+      userId: null,
+      login: null,
+      email: null,
+      userPhoto: null,
+      stateChange: false,
+    }),
   },
 });
 
 export const userSelector = (state) => state.auth;
 // Action creators are generated for each case reducer function
-export const {updateUserProfile, authStateChange, authSignOut} = authSlice.actions;
+export const { updateUserProfile, authStateChange, authSignOut } =
+  authSlice.actions;
 
 export const authReducer = authSlice.reducer;

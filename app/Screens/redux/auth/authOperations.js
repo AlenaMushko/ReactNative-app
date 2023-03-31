@@ -29,7 +29,7 @@ const authSignUpUser =
 
 const authSignInUser =
   ({ email, password }) =>
-  async (dispatch, getState) => {
+  async () => {
     try {
       const user = await dataBase
         .auth()
@@ -39,7 +39,7 @@ const authSignInUser =
       console.log(error);
     }
   };
-const authSignOutUser = () => async (dispatch, getState) => {
+const authSignOutUser = () => async (dispatch) => {
   try {
     await dataBase.auth().signOut();
     dispatch(authSignOut());
