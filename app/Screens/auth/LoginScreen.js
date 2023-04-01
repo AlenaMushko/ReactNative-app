@@ -62,10 +62,7 @@ export default function LoginScreen() {
 
     const emailTest = await email;
     const paswordTest = await password;
-console.log(regularEmail.test(emailTest));
-console.log(regularPassword.test(paswordTest));
     if (regularEmail.test(emailTest) && regularPassword.test(paswordTest)) {
-     console.log("ok 1");
       setErrorMessage("");
       navigation.navigate("home");
       setIsActive(false); // margin стає на початкове значення
@@ -73,7 +70,6 @@ console.log(regularPassword.test(paswordTest));
       dispatch(authSignInUser(state));
       setState(initialState); // скидаємо форму
       setDisabledBtn(true);
-      console.log("ok 2");
     } else {
       setErrorMessage("  Email must contain @, Password must contain only numbers, and have length from 6 to 15");
     }

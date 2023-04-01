@@ -16,6 +16,7 @@ export const authSlice = createSlice({
       ...state,
       userId: payload.userId,
       login: payload.login,
+      email: payload.email,
       userPhoto: payload.userPhoto,
     }),
     authStateChange: (state, { payload }) => ({

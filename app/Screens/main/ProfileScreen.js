@@ -28,6 +28,9 @@ export default function ProfileScreen({ route }) {
   const dispatch = useDispatch(); //створюємо портал
   const navigation = useNavigation();
 
+  const selectCurrentUser = (state) => state.auth;
+  const { login, email } = useSelector(selectCurrentUser);
+
   useEffect(() => {
     if (route.params) {
       setPost((prevState) => [...prevState, route.params]);
@@ -42,9 +45,6 @@ export default function ProfileScreen({ route }) {
     dispatch(authSignOutUser());
   };
 
-  const userLogin = dataBase.auth().currentUser.displayName;
-  const userPhoto = dataBase.auth().currentUser.photoURL;
-
   const getUserPosts = async () => {
     await dataBase
       .firestore()
@@ -58,8 +58,6 @@ export default function ProfileScreen({ route }) {
   const handleCalculateLikes = () =>{
     setLikes(likes + 1)
   };
-
-console.log("ProfileScreen userPosts",userPosts);
 
   return (
     <Container>
@@ -92,7 +90,7 @@ console.log("ProfileScreen userPosts",userPosts);
               onPress={handleSignOut}
             />
           </View>
-          <Text style={styles.title}>{userLogin}</Text>  
+          <Text style={styles.title}>{login}</Text>  
           </View>
         <SafeAreaView style={styles.postMap}>
           <FlatList

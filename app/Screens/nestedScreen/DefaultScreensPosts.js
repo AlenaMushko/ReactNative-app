@@ -6,8 +6,8 @@ import {
   Image,
   FlatList,
   TouchableOpacity,
-  SafeAreaView, 
-  Alert
+  SafeAreaView,
+  Alert,
 } from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import EvilIcons from "@expo/vector-icons/EvilIcons";
@@ -15,66 +15,64 @@ import { useNavigation } from "@react-navigation/native";
 import Container from "../../Components/Container";
 import dataBase from "../../firebase/config";
 import { authSignOutUser } from "../redux/auth/authOperations";
-import { useDispatch } from "react-redux";
-
+import { useDispatch, useSelector } from "react-redux";
 
 export default function DefaultScreensPosts() {
   const [post, setPost] = useState([]);
   const navigation = useNavigation();
   const dispatch = useDispatch(); //створюємо портал
 
+  //=========================================
+  const [allComments, setAllComments] = useState([]);
 
-//=========================================
-const [allComments, setAllComments] = useState([]);
+  useEffect(() => {
+    getAllComments();
+  }, []);
 
-useEffect(() => {
-  getAllComments();
-}, []);
+  const getAllComments = async () => {
+    const AllComments = dataBase
+      .firestore()
+      // .collection("posts")
+      // .doc(postId)
+      .collection("comments")
+      .onSnapshot((data) =>
+        setAllComments(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+      );
+  };
 
-const getAllComments = async () => {
- const AllComments=  dataBase
-    .firestore()
-    // .collection("posts")
-    // .doc(postId)
-    .collection("comments")
-    .onSnapshot((data) =>
-      setAllComments(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-    );
-    console.log("DefaultScreensPosts allComments", allComments);
-};
+  // console.log('====================================');
+  // console.log("allComments", allComments.length);
 
+  //=========================================
+  const getAllPost = async () => {
+    const postRef = await dataBase
+      .firestore()
+      .collection("posts")
+      .onSnapshot((data) =>
+        setPost(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+      );
+  };
 
-// console.log('====================================');
-// console.log("allComments", allComments.length);
+  useEffect(() => {
+    getAllPost();
+  }, []);
+  // console.log('====================================');
+  // console.log("post Coment", post[0]);
+  const selectCurrentUser = (state) => state.auth;
+  const { login, email } = useSelector(selectCurrentUser);
 
-//=========================================
-const getAllPost = async () => {
-  const postRef = await dataBase
-    .firestore()
-    .collection("posts")
-    .onSnapshot((data) => setPost(data.docs.map((doc) => ({ ...doc.data(), id: doc.id }))));
-};
-
-useEffect(() => {
-getAllPost();
-}, []);
-// console.log('====================================');
-// console.log("post Coment", post[0]);
-
-const userLogin = dataBase.auth().currentUser.displayName;
-const userEmail =  dataBase.auth().currentUser.email;
   const handleSignOut = () => {
     dispatch(authSignOutUser());
   };
 
   const createAlert = () =>
-  Alert.alert('Booking Success', '', [
-    { text: 'Close' },
-    { text: 'View Details', onPress: () => console.log('test') },
-  ]);
+    Alert.alert("Booking Success", "", [
+      { text: "Close" },
+      { text: "View Details", onPress: () => console.log("test") },
+    ]);
 
   return (
-      <Container>
+    <Container>
       <View style={styles.header}>
         <Text style={styles.title}>Posts</Text>
         <View style={styles.logoutBtn}>
@@ -96,12 +94,10 @@ const userEmail =  dataBase.auth().currentUser.email;
               source={require("../../assets/img/user.png")}
             ></Image>
           </View>
-     
-          <View>
-            {userLogin === null? <Text style={styles.title}>Login</Text> : <Text style={styles.title}>{userLogin}</Text>}
-            {userEmail === null? <Text style={styles.title}>Email</Text> : <Text style={styles.title}>{userEmail}</Text>}
-          </View> 
-         
+            <View>
+              <Text style={styles.title}>{login}</Text>
+              <Text style={styles.title}>{email}</Text>
+            </View>
         </View>
       </View>
       <SafeAreaView style={styles.postMap}>
@@ -110,7 +106,7 @@ const userEmail =  dataBase.auth().currentUser.email;
             data={post}
             keyExtractor={(item, index) => index.toString()}
             renderItem={({ item: { photoInfo, location, photo, id } }) => (
-              <View style={{ paddingTop: 32, paddingHorizontal:16 }}>
+              <View style={{ paddingTop: 32, paddingHorizontal: 16 }}>
                 <Image source={{ uri: photo }} style={styles.postImage} />
                 <Text style={styles.postName}>{photoInfo.name}</Text>
 
@@ -118,7 +114,7 @@ const userEmail =  dataBase.auth().currentUser.email;
                   <View style={styles.postComment}>
                     <TouchableOpacity
                       onPress={() => {
-                        navigation.navigate("CommentsScreen", {postId: id});
+                        navigation.navigate("CommentsScreen", { postId: id });
                       }}
                     >
                       <EvilIcons name="comment" size={24} color="#BDBDBD" />
@@ -135,11 +131,10 @@ const userEmail =  dataBase.auth().currentUser.email;
 
                   <View style={styles.geolocation}>
                     <TouchableOpacity
-                      onPress={() =>{
+                      onPress={() => {
                         createAlert();
                         navigation.navigate("MapScreen", { location });
-                      }
-                      }
+                      }}
                     >
                       <Image
                         style={styles.geolocationSvg}
@@ -155,7 +150,7 @@ const userEmail =  dataBase.auth().currentUser.email;
             )}
           />
         )}
-   </SafeAreaView>
+      </SafeAreaView>
     </Container>
   );
 }
