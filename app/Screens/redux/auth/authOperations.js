@@ -18,6 +18,7 @@ const authSignUpUser =
       const userUpdateProfile = {
         userId: updateUserSuccess.uid,
         login: updateUserSuccess.displayName,
+        email:updateUserSuccess.email,
         userPhoto: updateUserSuccess.photoURL,
       };
       dispatch(updateUserProfile(userUpdateProfile));
@@ -56,6 +57,7 @@ const authStateChangeUser = () => async (dispatch, getState) => {
         const userUpdateProfile = {
           userId: user.uid,
           login: user.displayName,
+          email:user.email,
           userPhoto: user.photoURL,
         };
 

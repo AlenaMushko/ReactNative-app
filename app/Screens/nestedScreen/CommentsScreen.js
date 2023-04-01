@@ -120,7 +120,6 @@ export default function CommentsScreen({ route }) {
       Keyboard.dismiss();
       setNewComment("");
     }
-    console.log("alert", showAlert);
   };
   // console.log('====================================');
   // console.log("allComments", allComments.length);

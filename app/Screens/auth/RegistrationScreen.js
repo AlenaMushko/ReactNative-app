@@ -15,6 +15,7 @@ import AddUserIcon from "../../assets/svg/addUserIcon";
 import Container from "../../Components/Container";
 import Button from "../../Components/Button";
 import { authSignUpUser } from "../redux/auth/authOperations";
+import { MyCamera } from "../../Components/Camera";
 
 const initialState = {
   login: "",
@@ -61,14 +62,8 @@ export default function RegistrationScreen() {
     const emailTest = await email;
     const paswordTest = await password;
 
-    console.log(regularEmail.test(emailTest));
-    console.log(regularPassword.test(paswordTest));
-    console.log(regularLogin.test(loginTest));
-
     if (regularLogin.test(loginTest) && regularEmail.test(emailTest) && regularPassword.test(paswordTest)){
-      console.log("ok 1");
       navigation.navigate("home");
-      console.log("ok 2");
       setIsActive(false); // margin стає на початкове значення
       Keyboard.dismiss(); // ховається клавіатура  
       dispatch(authSignUpUser(state));
@@ -98,16 +93,20 @@ export default function RegistrationScreen() {
           <View style={{ ...styles.box, paddingBottom: isActive ? 32 : 78 }}>
             {isActive === true ? (
               <View style={styles.userPhoto}>
-                <ImageBackground
+                {/* <ImageBackground
                   style={styles.imgBg}
                   source={require("../../assets/img/user.png")}
-                >
+                > */}
+                <MyCamera  takePhoto={takePhoto}
+          location={location}
+          photo={photo}
+          setCamera={setCamera}/>
                   <AddUserIcon
                     style={styles.addPhoto}
                     fill={"#E8E8E8"}
                     stroke={"#E8E8E8"}
                   />
-                </ImageBackground>
+                {/* </ImageBackground> */}
               </View>
             ) : (
               <View style={styles.userPhoto}>
