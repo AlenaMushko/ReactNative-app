@@ -60,10 +60,9 @@ getAllPost();
 }, []);
 // console.log('====================================');
 // console.log("post Coment", post[0]);
-  const userLogin = dataBase.auth().currentUser.displayName;
-  const userPhoto = dataBase.auth().currentUser.photoURL;
-  const userEmail = dataBase.auth().currentUser.email;
 
+const userLogin = dataBase.auth().currentUser.displayName;
+const userEmail =  dataBase.auth().currentUser.email;
   const handleSignOut = () => {
     dispatch(authSignOutUser());
   };
@@ -75,7 +74,7 @@ getAllPost();
   ]);
 
   return (
-    <Container>
+      <Container>
       <View style={styles.header}>
         <Text style={styles.title}>Posts</Text>
         <View style={styles.logoutBtn}>
@@ -97,10 +96,12 @@ getAllPost();
               source={require("../../assets/img/user.png")}
             ></Image>
           </View>
+     
           <View>
-            <Text style={styles.title}>{userLogin}</Text>
-            <Text style={styles.title}>{userEmail}</Text>
-          </View>
+            {userLogin === null? <Text style={styles.title}>Login</Text> : <Text style={styles.title}>{userLogin}</Text>}
+            {userEmail === null? <Text style={styles.title}>Email</Text> : <Text style={styles.title}>{userEmail}</Text>}
+          </View> 
+         
         </View>
       </View>
       <SafeAreaView style={styles.postMap}>

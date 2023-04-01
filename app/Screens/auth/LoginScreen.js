@@ -8,10 +8,9 @@ import {
   Keyboard,
   Platform,
   KeyboardAvoidingView,
-  ToastAndroid
+  ToastAndroid,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import * as yup from 'yup';
 import Container from "../../Components/Container";
 import Button from "../../Components/Button";
 import { useDispatch } from "react-redux";
@@ -27,27 +26,13 @@ const initialIsFocus = {
   password: false,
 };
 
-const validationSchema = yup.object().shape({
-  email: yup
-    .string()
-    .required('Name is required'),
-  password: yup
-    .string()
-    .min(6, 'Password must be at least 6 characters')
-    .required('Password is required'),
-});
-
-
 export default function LoginScreen() {
   const [state, setState] = useState(initialState);
   const [isFocus, setIsFocus] = useState(initialIsFocus);
   const [isShowPassword, setIsShowPassword] = useState(false);
   const [isActive, setIsActive] = useState(false);
   const [disabledBtn, setDisabledBtn] = useState(true);
-
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [errors, setErrors] = useState({});
+  const [errorMessage, setErrorMessage] = useState("");
 
   const dispatch = useDispatch();
   const navigation = useNavigation();
@@ -62,108 +47,123 @@ export default function LoginScreen() {
     setIsActive(false);
     setIsFocus((prevState) => ({ ...prevState, [inputValue]: false }));
   };
- 
+
   const handleGoToRegister = () => {
     navigation.navigate("registration");
   };
 
-  const showToast = () => {
-    ToastAndroid.show('A pikachu appeared nearby !', ToastAndroid.SHORT,       ToastAndroid.CENTER,);
-  };
+
 
   const handleSubmit = async () => {
     const { email, password } = state;
 
-    if (!email || !password) {
-      showToast();
-      return;
-    }                                               //!
-    navigation.navigate('home'); 
-    setIsActive(false); // margin стає на початкове значення
-    Keyboard.dismiss(); // ховається клавіатура
-    dispatch(authSignInUser(state));
-    setState(initialState); // скидаємо форму
-    setDisabledBtn(true);
+    const regularEmail = /^[a-zA-Z@.]*$/;
+    const regularPassword = /^\d{6,15}$/;
+
+    const emailTest = await email;
+    const paswordTest = await password;
+console.log(regularEmail.test(emailTest));
+console.log(regularPassword.test(paswordTest));
+    if (regularEmail.test(emailTest) && regularPassword.test(paswordTest)) {
+     console.log("ok 1");
+      setErrorMessage("");
+      navigation.navigate("home");
+      setIsActive(false); // margin стає на початкове значення
+      Keyboard.dismiss(); // ховається клавіатура
+      dispatch(authSignInUser(state));
+      setState(initialState); // скидаємо форму
+      setDisabledBtn(true);
+      console.log("ok 2");
+    } else {
+      setErrorMessage("  Email must contain @, Password must contain only numbers, and have length from 6 to 15");
+    }
   };
 
   return (
     <Container>
-        <ImageBackground
-          style={styles.imgBg}
-          source={require("../../assets/img/BGbgMountains.png")}
+      <ImageBackground
+        style={styles.imgBg}
+        source={require("../../assets/img/BGbgMountains.png")}
+      >
+        <KeyboardAvoidingView
+          behavior={Platform.OS == "ios" ? "padding" : "height"}
         >
-          <KeyboardAvoidingView
-            behavior={Platform.OS == "ios" ? "padding" : "height"}
-          >
-            <View
-              style={{ ...styles.box, paddingBottom: isActive ? 32 : 132 }}
-            >
-              <Text style={styles.title}>Log In</Text>
-              <View style={styles.form}>
+          <View style={{ ...styles.box, paddingBottom: isActive ? 32 : 132 }}>
+            <Text style={styles.title}>Log In</Text>
+            <View style={styles.form}>
+              <TextInput
+                style={{
+                  ...styles.input,
+                  borderColor: isFocus.email ? "#FF6C00" : "#E8E8E8",
+                }}
+                onFocus={() => handleFocus("email")}
+                onEndEditing={() => handleEndEditing("email")}
+                onChangeText={(value) =>
+                  setState((prevState) => ({
+                    ...prevState,
+                    email: value.trim().toLowerCase(),
+                  }))
+                }
+                value={state.email}
+                placeholder="email address"
+                keyboardType="email-address"
+              />
+              <View style={styles.inputPassword}>
                 <TextInput
                   style={{
                     ...styles.input,
-                    borderColor: isFocus.email ? "#FF6C00" : "#E8E8E8",
+                    borderColor: isFocus.password ? "#FF6C00" : "#E8E8E8",
                   }}
-                  
-                  onFocus={() => handleFocus("email")}
-                  onEndEditing={() => handleEndEditing("email")}
+                  onFocus={() => handleFocus("password")}
+                  onEndEditing={() => handleEndEditing("password")}
                   onChangeText={(value) =>
-                    setState((prevState) => ({ ...prevState, email: value.trim().toLowerCase() }))
+                    setState((prevState) => ({
+                      ...prevState,
+                      password: value.trim(),
+                    }))
                   }
-                  value={state.email}
-                  placeholder="email address"
-                  keyboardType="email-address"
+                  value={state.password}
+                  placeholder="password"
+                  keyboardType="numeric"
+                  secureTextEntry={!isShowPassword}
                 />
-                <View style={styles.inputPassword}>
-                  <TextInput
-                    style={{
-                      ...styles.input,
-                      borderColor: isFocus.password ? "#FF6C00" : "#E8E8E8",
-                    }}
-                    onFocus={() => handleFocus("password")}
-                    onEndEditing={() => handleEndEditing("password")}
-                    onChangeText={(value) =>
-                      setState((prevState) => ({
-                        ...prevState,
-                        password: value.trim(),
-                      }))
-                    }
-                    value={state.password}
-                    placeholder="password"
-                    keyboardType="numeric"
-                    secureTextEntry={!isShowPassword}
-                  />
-                  {isShowPassword === true ? (
-                    <Text
-                      style={styles.show}
-                      onPress={() => setIsShowPassword((prev) => !prev)}
-                    >
-                      Hide
-                    </Text>
-                  ) : (
-                    <Text
-                      style={styles.show}
-                      onPress={() => setIsShowPassword((prev) => !prev)}
-                    >
-                      Show
-                    </Text>
-                  )}
-                </View>
-
-                {!isActive && (
-                  <View>
-                    <Button onSubmit={handleSubmit}  text="Log In"  disabledBtn={disabledBtn}/>
-                    <Text style={styles.inAccount} onPress={handleGoToRegister}>
-                      Don't have an account? Register
-                    </Text>
-                  </View>
+                {isShowPassword === true ? (
+                  <Text
+                    style={styles.show}
+                    onPress={() => setIsShowPassword((prev) => !prev)}
+                  >
+                    Hide
+                  </Text>
+                ) : (
+                  <Text
+                    style={styles.show}
+                    onPress={() => setIsShowPassword((prev) => !prev)}
+                  >
+                    Show
+                  </Text>
                 )}
               </View>
+
+              {!isActive && (
+                <View>
+                  {errorMessage ? (
+              <Text style={{color:"#ff0000"}}>{errorMessage}</Text>
+            ) : null}
+                  <Button
+                    onSubmit={handleSubmit}
+                    text="Log In"
+                    disabledBtn={disabledBtn}
+                  />
+                  <Text style={styles.inAccount} onPress={handleGoToRegister}>
+                    Don't have an account? Register
+                  </Text>
+                </View>
+              )}
             </View>
-          </KeyboardAvoidingView>
-        </ImageBackground>
-     </Container>
+          </View>
+        </KeyboardAvoidingView>
+      </ImageBackground>
+    </Container>
   );
 }
 

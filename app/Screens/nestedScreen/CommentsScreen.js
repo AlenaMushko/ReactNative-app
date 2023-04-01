@@ -28,6 +28,7 @@ export default function CommentsScreen({ route }) {
   const navigation = useNavigation();
   const nickName = useSelector((state) => state.auth.login); // з бд беремо ід юзера
   const keyboard = useKeyboard();
+
   const [errorMessage, setErrorMessage] = useState("");
   const [showAlert, setShowAlert] = useState(false);
 
@@ -191,7 +192,7 @@ export default function CommentsScreen({ route }) {
             </View>
             {showAlert && <Text>Comment is created</Text>}
             {errorMessage ? (
-              <Text style={styles.error}>{errorMessage}</Text>
+              <Text style={{color:"#ff0000"}}>{errorMessage}</Text>
             ) : null}
           </View>
         </TouchableWithoutFeedback>

@@ -64,6 +64,7 @@ const authStateChangeUser = () => async (dispatch, getState) => {
       }
     });
   } catch (error) {
+    console.log('authStateChangeUser ===========================');
     console.log(error.message);
     console.log(error);
   }

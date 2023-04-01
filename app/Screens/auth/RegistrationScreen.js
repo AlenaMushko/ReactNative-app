@@ -11,8 +11,6 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
-import * as yup from "yup";
-import { Formik } from 'formik'
 import AddUserIcon from "../../assets/svg/addUserIcon";
 import Container from "../../Components/Container";
 import Button from "../../Components/Button";
@@ -30,32 +28,13 @@ const initialIsFocus = {
   password: false,
 };
 
-const validationSchema = yup.object().shape({
-  login:  yup
-  .string()
-  .min(3, 'login must be at least 3 characters')
-  .required('Login is required'),
-  email:yup
-  .string()
-  .email('Invalid email')
-  .required('Email is required'),
-  password: yup
-    .string()
-    .min(6, "Password must be at least 6 characters")
-    .required("Password is required"),
-});
-
 export default function RegistrationScreen() {
   const [state, setState] = useState(initialState);
   const [isFocus, setIsFocus] = useState(initialIsFocus);
   const [isShowPassword, setIsShowPassword] = useState(false);
   const [isActive, setIsActive] = useState(false);
   const [disabledBtn, setDisabledBtn] = useState(true);
-
-  const [login, setLogin] = useState("");
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState({});
+  const [errorMessage, setErrorMessage] = useState("");
 
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -72,32 +51,35 @@ export default function RegistrationScreen() {
   };
 
   const handleSubmit = async () => {
-    // const { login, email, password } = state;
+    const {login, email, password } = state;
 
-    // if (!login || !email || !password) {
-    //   showToast();
-    //   return;
-    // } //!
-    // const pattern = "^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$";
-    // title =
-    //   "Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan";
-  
-    try {
-      await validationSchema.validate({ login, email, password });
+    const regularLogin = /^[a-zA-Z]{3,15}$/;
+    const regularEmail = /^[a-zA-Z@.]*$/;
+    const regularPassword = /^\d{6,15}$/;
+
+    const loginTest = await login;
+    const emailTest = await email;
+    const paswordTest = await password;
+
+    console.log(regularEmail.test(emailTest));
+    console.log(regularPassword.test(paswordTest));
+    console.log(regularLogin.test(loginTest));
+
+    if (regularLogin.test(loginTest) && regularEmail.test(emailTest) && regularPassword.test(paswordTest)){
+      console.log("ok 1");
       navigation.navigate("home");
+      console.log("ok 2");
       setIsActive(false); // margin стає на початкове значення
-      Keyboard.dismiss(); // ховається клавіатура
+      Keyboard.dismiss(); // ховається клавіатура  
       dispatch(authSignUpUser(state));
       setState(initialState); // скидаємо форму
       setDisabledBtn(true);
-      console.log('Email is valid:', email);
-    } catch (error) {
-      console.log('Email validation error:', errors.email);
-      console.log('====================================');
-      console.log("errors.email ====>", errors);
-      console.log('====================================');
-      setErrors(error.errors);
-    }
+
+     
+
+    } else {
+      setErrorMessage("Login contain at least 3 letters,  Email must contain @, Password must contain only numbers, and have length from 6 to 15");
+    }     
   };
 
   const handleGoToLogin = () => {
@@ -156,7 +138,7 @@ export default function RegistrationScreen() {
                 placeholder="login"
                 keyboardType="default"
               />
-              {errors.login && <Text style={styles.error}>{errors.login}</Text>}
+
               <TextInput
                 style={{
                   ...styles.input,
@@ -164,19 +146,16 @@ export default function RegistrationScreen() {
                 }}
                 onFocus={() => handleFocus("email")}
                 onEndEditing={() => handleEndEditing("email")}
-                onChangeText={(value) =>{
-                  setEmail(value)
+                onChangeText={(value) =>
                   setState((prevState) => ({
                     ...prevState,
                     email: value.trim().toLowerCase(),
                   }))
                 }
-                }
                 value={state.email}
                 placeholder="email address"
                 keyboardType="email-address"
               />
-              {errors.email && <Text style={styles.error}>{errors.email}</Text>}
               <View style={styles.inputPassword}>
                 <TextInput
                   style={{
@@ -196,7 +175,6 @@ export default function RegistrationScreen() {
                   keyboardType="numeric"
                   secureTextEntry={!isShowPassword}
                 />
-                {errors.password && <Text style={styles.error}>{errors.password}</Text>}
                 {isShowPassword === true ? (
                   <Text
                     style={styles.show}
@@ -215,6 +193,9 @@ export default function RegistrationScreen() {
               </View>
               {!isActive && (
                 <View>
+                {errorMessage ? (
+              <Text style={{color:"#ff0000"}}>{errorMessage}</Text>
+            ) : null}
                   <Button
                     onSubmit={handleSubmit}
                     text="Register"
@@ -315,9 +296,5 @@ const styles = StyleSheet.create({
     backgroundColor: "#F6F6F6",
     borderRadius: 16,
     top: -60,
-  },
-  error: {
-    color: '#ff0000',
-    marginBottom:150,
   },
 });
