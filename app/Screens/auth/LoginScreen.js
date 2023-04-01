@@ -11,6 +11,7 @@ import {
   ToastAndroid
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import * as yup from 'yup';
 import Container from "../../Components/Container";
 import Button from "../../Components/Button";
 import { useDispatch } from "react-redux";
@@ -26,12 +27,27 @@ const initialIsFocus = {
   password: false,
 };
 
+const validationSchema = yup.object().shape({
+  email: yup
+    .string()
+    .required('Name is required'),
+  password: yup
+    .string()
+    .min(6, 'Password must be at least 6 characters')
+    .required('Password is required'),
+});
+
+
 export default function LoginScreen() {
   const [state, setState] = useState(initialState);
   const [isFocus, setIsFocus] = useState(initialIsFocus);
   const [isShowPassword, setIsShowPassword] = useState(false);
   const [isActive, setIsActive] = useState(false);
   const [disabledBtn, setDisabledBtn] = useState(true);
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [errors, setErrors] = useState({});
 
   const dispatch = useDispatch();
   const navigation = useNavigation();

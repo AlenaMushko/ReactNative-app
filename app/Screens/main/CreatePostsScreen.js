@@ -8,6 +8,7 @@ import {
   TextInput,
   KeyboardAvoidingView,
   Keyboard,
+  TouchableOpacity,
 } from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useNavigation } from "@react-navigation/native";
@@ -17,7 +18,6 @@ import * as Location from "expo-location";
 import { useSelector } from "react-redux";
 import Button from "../../Components/Button";
 import Container from "../../Components/Container";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import dataBase from "../../firebase/config";
 
 const initialPhotoInfo = {
@@ -34,6 +34,7 @@ export default function CreatePostsScreen() {
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [disabledBtn, setDisabledBtn] = useState(true);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const navigation = useNavigation();
   const { userId, login } = useSelector((state) => state.auth);
@@ -52,6 +53,15 @@ export default function CreatePostsScreen() {
       }
     })();
   }, []);
+
+  useEffect(() => {
+    if (showAlert) {
+      const timeout = setTimeout(() => {
+        setShowAlert(false);
+      }, 3000);
+      // return () => clearTimeout(timeout);
+    }
+  }, [showAlert]);
 
   const handleArrow = () => {
     navigation.navigate("PostsScreen");
@@ -89,12 +99,22 @@ export default function CreatePostsScreen() {
 
   // відправляти фото
   const sendPhoto = () => {
-    uploadPostToServer();
-    navigation.navigate("DefaultScreensPosts", { photo, photoInfo, location });
-    Keyboard.dismiss(); // ховається клавіатура
-    setPhotoInfo(initialPhotoInfo); // скидаємо форму
-    setDisabledBtn(true);
-    setPhoto("");
+    const { name, place } = photoInfo;
+    if (name.length < 3 || place.length < 3) {
+      setErrorMessage("Text must be at least 3 characters long.");
+    } else {
+      setErrorMessage("");
+      uploadPostToServer();
+      navigation.navigate("DefaultScreensPosts", {
+        photo,
+        photoInfo,
+        location,
+      });
+      Keyboard.dismiss(); // ховається клавіатура
+      setPhotoInfo(initialPhotoInfo); // скидаємо форму
+      setDisabledBtn(true);
+      setPhoto("");
+    }
   };
 
   const handleDelPost = () => {
@@ -125,7 +145,7 @@ export default function CreatePostsScreen() {
         .firestore()
         .collection("posts")
         .doc()
-     .set({ photo, photoInfo, location, userId, login});
+        .set({ photo, photoInfo, location, userId, login });
     } catch (error) {
       console.log(error);
       console.log(error.massage);
@@ -238,13 +258,15 @@ export default function CreatePostsScreen() {
               text="Publish"
               disabledBtn={disabledBtn}
             />
-            <View style={styles.deletePost} onPress={handleDelPost}>
+            <TouchableOpacity style={styles.deletePost} onPress={handleDelPost}>
               <Image
                 style={styles.delete}
                 source={require("../../assets/img/deletePost.png")}
-                onPress={handleDelPost}
               ></Image>
-            </View>
+            </TouchableOpacity>
+            {errorMessage ? (
+              <Text style={styles.error}>{errorMessage}</Text>
+            ) : null}
           </View>
         </KeyboardAvoidingView>
       </View>
