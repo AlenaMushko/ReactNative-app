@@ -125,6 +125,7 @@ export default function CreatePostsScreen() {
           photo={photo}
           setCamera={setCamera}
         />
+        <Text style={{ ...styles.title, marginTop: 8 }}>Download photo</Text>
         <KeyboardAvoidingView
           behavior={Platform.OS == "ios" ? "padding" : "height"}
         >

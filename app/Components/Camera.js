@@ -1,17 +1,11 @@
 import * as Location from "expo-location";
-import {
-    StyleSheet,
-    Text,
-    View,
-    Image,
-    TouchableOpacity,
-  } from "react-native";
-  import { Camera } from "expo-camera";
+import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
+import { Camera } from "expo-camera";
 import { useEffect, useState } from "react";
 import { useKeyboard } from "@react-native-community/hooks";
+import { Ionicons } from "@expo/vector-icons";
 
-
-export const MyCamera = ({takePhoto, location, photo, setCamera}) => {
+export const MyCamera = ({ takePhoto, location, photo, setCamera }) => {
   const [hasPermission, setHasPermission] = useState(null);
   const [cameraType, setCameraType] = useState(Camera.Constants.Type.back);
   const [errorMsg, setErrorMsg] = useState(null);
@@ -84,58 +78,60 @@ export const MyCamera = ({takePhoto, location, photo, setCamera}) => {
             <View
               style={{
                 backgroundColor: "transparent",
-                padding: 50,
+                position: "relative",
+                width: 120,
               }}
             >
-              <TouchableOpacity onPress={handleCameraType}>
-                <Text style={styles.flip}>Flip camera</Text>
+              <TouchableOpacity style={styles.flip} onPress={handleCameraType}>
+                <Ionicons
+                  name="ios-camera-reverse-outline"
+                  size={40}
+                  color="#FFFFFF"
+                />
               </TouchableOpacity>
             </View>
           </Camera>
-          <Text style={{ ...styles.title, marginTop: 8 }}>Download photo</Text>
         </>
       )}
     </>
   );
 };
 
-
-
 const styles = StyleSheet.create({
-    camera: {
-        height: 200,
-        borderRadius: 8,
-        borderWidth: 1,
-        borderColor: "#E8E8E8",
-        alignItems: "center",
-      },
-      photo: {
-        position: "absolute",
-        top: 0,
-        left: 0,
-        borderWidth: 1,
-        borderColor: "#E8E8E8",
-      },   
-    snapContainer: {
-      borderWidth: 1,
-      borderRadius: 50,
-      borderColor: "#E8E8E8",
-      width: 65,
-      height: 65,
-      alignItems: "center",
-      justifyContent: "center",
-      marginTop: 50,
-    },
-    addPhoto: {
-        width: 60,
-        height: 60,
-        backgroundColor: "#FFFFFF",
-        borderRadius: 50,
-      },
-      flip: {
-        fontSize: 24,
-        marginBottom: 10,
-        color: "#FFFFFF",
-      },
-  });
-  
+  camera: {
+    height: 200,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#E8E8E8",
+    alignItems: "center",
+  },
+  photo: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    borderWidth: 1,
+    borderColor: "#E8E8E8",
+  },
+  snapContainer: {
+    borderWidth: 1,
+    borderRadius: 50,
+    borderColor: "#E8E8E8",
+    width: 65,
+    height: 65,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 50,
+  },
+  addPhoto: {
+    width: 60,
+    height: 60,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 50,
+  },
+  flip: {
+    flex: 1,
+    position: "absolute",
+    right: 5,
+    top: 50,
+  },
+});

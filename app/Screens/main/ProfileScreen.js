@@ -29,7 +29,7 @@ export default function ProfileScreen({ route }) {
   const navigation = useNavigation();
 
   const selectCurrentUser = (state) => state.auth;
-  const { login, email } = useSelector(selectCurrentUser);
+  const { login, email, userPhoto  } = useSelector(selectCurrentUser);
 
   useEffect(() => {
     if (route.params) {
@@ -70,7 +70,7 @@ export default function ProfileScreen({ route }) {
            <View style={styles.userPhoto}>
             <ImageBackground
               style={styles.imgBg}
-              source={require("../../assets/img/user.png")}
+              source={{ uri:userPhoto }}
             >
               <AddUserIcon
                 style={styles.addPhoto}
