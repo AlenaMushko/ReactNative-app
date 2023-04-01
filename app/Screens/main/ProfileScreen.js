@@ -21,6 +21,7 @@ import dataBase from "../../firebase/config";
 
 
 export default function ProfileScreen({ route }) {
+  const[likes, setLikes]= useState(0);
   const [post, setPost] = useState([]);
   const [userPosts, setUserPosts] = useState([]);
   const userId = useSelector((state) => state.auth.userId);
@@ -53,6 +54,13 @@ export default function ProfileScreen({ route }) {
         setUserPosts(data.docs.map((doc) => ({ ...doc.data() })))
       );
   };
+
+  const handleCalculateLikes = () =>{
+    setLikes(likes + 1)
+  };
+
+console.log("ProfileScreen userPosts",userPosts);
+
   return (
     <Container>
       <ImageBackground
@@ -90,7 +98,7 @@ export default function ProfileScreen({ route }) {
           <FlatList
             data={userPosts}
             keyExtractor={(item, index) => index.toString()}
-            renderItem={({ item: { photoInfo, location, photo, id } }) => (
+            renderItem={({ item: { photoInfo, location, photo, userId} }) => (
               <View style={{ paddingTop: 32 }}>
                 <Image source={{ uri: photo }} style={styles.postImage} />
                 <Text style={styles.postName}>{photoInfo.name}</Text>
@@ -99,7 +107,7 @@ export default function ProfileScreen({ route }) {
                   <View style={styles.postComment}>
                     <TouchableOpacity
                       onPress={() => {
-                        navigation.navigate("CommentsScreen", { postId: id });
+                        navigation.navigate("CommentsScreen", { postId:userId });
                       }}
                     >
                       <Entypo name="message" size={24} color="#FF6C00" />
@@ -116,9 +124,7 @@ export default function ProfileScreen({ route }) {
 
                   <View style={{...styles.postComment, marginLeft:27}}>
                     <TouchableOpacity
-                      // onPress={() => {
-                      //   navigation.navigate("CommentsScreen", { postId: id });
-                      // }}
+                      onPress={handleCalculateLikes}
                     >
                       <AntDesign name="like1" size={24} color="#FF6C00" />
                     </TouchableOpacity>
@@ -128,7 +134,7 @@ export default function ProfileScreen({ route }) {
                         ...styles.postNumberComment,
                       }}
                     >
-                      0
+                      {likes}
                     </Text>
                   </View>
 

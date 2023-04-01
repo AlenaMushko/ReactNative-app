@@ -28,12 +28,22 @@ export default function CommentsScreen({ route }) {
   const navigation = useNavigation();
   const nickName = useSelector((state) => state.auth.login); // з бд беремо ід юзера
   const keyboard = useKeyboard();
+  const [errorMessage, setErrorMessage] = useState("");
+  const [showAlert, setShowAlert] = useState(false);
 
   useEffect(() => {
-    // setTimeout(1000, () => SplashScreen.hide());
     getAllPosts();
     getUserPosts();
   }, []);
+
+  useEffect(() => {
+    if (showAlert) {
+      const timeout = setTimeout(() => {
+        setShowAlert(false);
+      }, 3000);
+      // return () => clearTimeout(timeout);
+    }
+  }, [showAlert]);
 
   const getUserPosts = async () => {
     await dataBase
@@ -99,17 +109,23 @@ export default function CommentsScreen({ route }) {
     navigation.navigate("DefaultScreensPosts");
   };
 
-  const handleCreatePost = ()=>{
-    createComment();
-    Keyboard.dismiss();
-    setNewComment('');
-  }
+  const handleCreatePost = () => {
+    if (newComment.length < 3) {
+      setErrorMessage("Text must be at least 3 characters long.");
+    } else {
+      setErrorMessage("")
+      setShowAlert(true);
+      createComment();
+      Keyboard.dismiss();
+      setNewComment("");
+    }
+    console.log("alert", showAlert);
+  };
   // console.log('====================================');
   // console.log("allComments", allComments.length);
 
   return (
-
-<Container>
+    <Container>
       <View style={styles.header}>
         <Text style={styles.title}>Comments</Text>
         <View style={styles.goToPosts}>
@@ -151,12 +167,12 @@ export default function CommentsScreen({ route }) {
             </SafeAreaView>
           </>
         )}
-    </View>
-        <KeyboardAvoidingView
-          behavior={Platform.OS == "ios" ? "padding" : "height"}
-        >
-           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                   <View style={{ position: "relative" }}>
+      </View>
+      <KeyboardAvoidingView
+        behavior={Platform.OS == "ios" ? "padding" : "height"}
+      >
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={{ position: "relative" }}>
             <TextInput
               style={{ ...styles.title, ...styles.input, marginLeft: 32 }}
               keyboardType="default"
@@ -165,7 +181,7 @@ export default function CommentsScreen({ route }) {
               value={newComment}
               onChangeText={setNewComment}
             />
-            <View style={styles.arrow} >
+            <View style={styles.arrow}>
               <Ionicons
                 name="md-arrow-up-circle-sharp"
                 size={44}
@@ -173,12 +189,14 @@ export default function CommentsScreen({ route }) {
                 onPress={handleCreatePost}
               />
             </View>
-          </View>   
-           </TouchableWithoutFeedback>
-
-        </KeyboardAvoidingView>
-  
-    </Container>    
+            {showAlert && <Text>Comment is created</Text>}
+            {errorMessage ? (
+              <Text style={styles.error}>{errorMessage}</Text>
+            ) : null}
+          </View>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
+    </Container>
   );
 }
 
