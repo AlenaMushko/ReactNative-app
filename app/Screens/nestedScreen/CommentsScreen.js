@@ -37,16 +37,7 @@ export default function CommentsScreen({ route }) {
     getUserPosts();
   }, []);
 
-  useEffect(() => {
-    if (showAlert) {
-      const timeout = setTimeout(() => {
-        setShowAlert(false);
-      }, 3000);
-      // return () => clearTimeout(timeout);
-    }
-  }, [showAlert]);
-
-  const getUserPosts = async () => {
+    const getUserPosts = async () => {
     await dataBase
       .firestore()
       .collection("posts")
@@ -106,9 +97,6 @@ export default function CommentsScreen({ route }) {
         setAllComments(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
       );
   };
-  const handleArrow = () => {
-    navigation.navigate("DefaultScreensPosts");
-  };
 
   const handleCreatePost = () => {
     if (newComment.length < 3) {
@@ -135,7 +123,7 @@ export default function CommentsScreen({ route }) {
             color={"#BDBDBD"}
             backgroundColor={"transparent"}
             header={20}
-            onPress={handleArrow}
+            onPress={() =>  navigation.goBack()}
           />
           <Text style={styles.textHeader}>Posts</Text>
         </View>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -8,10 +8,10 @@ import {
   Keyboard,
   Platform,
   KeyboardAvoidingView,
+  Image,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
-import AddUserIcon from "../../assets/svg/addUserIcon";
 import Container from "../../Components/Container";
 import Button from "../../Components/Button";
 import { authSignUpUser } from "../redux/auth/authOperations";
@@ -21,6 +21,7 @@ const initialState = {
   login: "",
   email: "",
   password: "",
+  userPhoto: "",
 };
 
 const initialIsFocus = {
@@ -36,6 +37,26 @@ export default function RegistrationScreen() {
   const [isActive, setIsActive] = useState(false);
   const [disabledBtn, setDisabledBtn] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
+  const [camera, setCamera] = useState(null);
+  const [photo, setPhoto] = useState("");
+
+  // робити фото
+  const takePhoto = async () => {
+    const photo = await camera.takePictureAsync();
+
+    setDisabledBtn(false);
+    setState((prevState) => ({
+      ...prevState,
+      userPhoto: photo.uri,
+    }));
+  };
+
+  useEffect(() => {
+    userPhotoCreate();
+  }, []);
+  const userPhotoCreate = () => {
+    setIsActive(true);
+  };
 
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -52,7 +73,7 @@ export default function RegistrationScreen() {
   };
 
   const handleSubmit = async () => {
-    const {login, email, password } = state;
+    const { login, email, password } = state;
 
     const regularLogin = /^[a-zA-Z]{3,15}$/;
     const regularEmail = /^[a-zA-Z@.]*$/;
@@ -62,25 +83,28 @@ export default function RegistrationScreen() {
     const emailTest = await email;
     const paswordTest = await password;
 
-    if (regularLogin.test(loginTest) && regularEmail.test(emailTest) && regularPassword.test(paswordTest)){
+    if (
+      regularLogin.test(loginTest) &&
+      regularEmail.test(emailTest) &&
+      regularPassword.test(paswordTest)
+    ) {
       navigation.navigate("home");
       setIsActive(false); // margin стає на початкове значення
-      Keyboard.dismiss(); // ховається клавіатура  
+      Keyboard.dismiss(); // ховається клавіатура
       dispatch(authSignUpUser(state));
       setState(initialState); // скидаємо форму
       setDisabledBtn(true);
-
-     
-
     } else {
-      setErrorMessage("Login contain at least 3 letters,  Email must contain @, Password must contain only numbers, and have length from 6 to 15");
-    }     
+      setErrorMessage(
+        "Login contain at least 3 letters,  Email must contain @, Password must contain only numbers, and have length from 6 to 15"
+      );
+    }
   };
 
   const handleGoToLogin = () => {
     navigation.navigate("login");
   };
- 
+
   return (
     <Container>
       <ImageBackground
@@ -91,30 +115,21 @@ export default function RegistrationScreen() {
           behavior={Platform.OS == "ios" ? "padding" : "height"}
         >
           <View style={{ ...styles.box, paddingBottom: isActive ? 32 : 78 }}>
-            {isActive === true ? (
-              <View style={styles.userPhoto}>
-                {/* <ImageBackground
-                  style={styles.imgBg}
-                  source={require("../../assets/img/user.png")}
-                > */}
-                <MyCamera  takePhoto={takePhoto}
-          location={location}
-          photo={photo}
-          setCamera={setCamera}/>
-                  <AddUserIcon
-                    style={styles.addPhoto}
-                    fill={"#E8E8E8"}
-                    stroke={"#E8E8E8"}
-                  />
-                {/* </ImageBackground> */}
-              </View>
-            ) : (
-              <View style={styles.userPhoto}>
-                <AddUserIcon
-                  style={styles.addPhoto}
-                  fill={"#FF6C00"}
-                  stroke={"#FF6C00"}
+            {!state.userPhoto && (
+              <View style={{ ...styles.userPhoto, ...styles.imgBg }}>
+                <MyCamera
+                  takePhoto={takePhoto}
+                  photo={photo}
+                  setCamera={setCamera}
                 />
+              </View>
+            )}
+            {state.userPhoto && (
+              <View style={styles.userPhoto}>
+                <Image
+                  style={styles.imgUser}
+                  source={{ uri: state.userPhoto }}
+                ></Image>
               </View>
             )}
 
@@ -192,9 +207,9 @@ export default function RegistrationScreen() {
               </View>
               {!isActive && (
                 <View>
-                {errorMessage ? (
-              <Text style={{color:"#ff0000"}}>{errorMessage}</Text>
-            ) : null}
+                  {errorMessage ? (
+                    <Text style={{ color: "#ff0000" }}>{errorMessage}</Text>
+                  ) : null}
                   <Button
                     onSubmit={handleSubmit}
                     text="Register"
@@ -295,5 +310,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#F6F6F6",
     borderRadius: 16,
     top: -60,
+  },
+  imgUser: {
+    height: 120,
+    borderRadius: 8,
   },
 });

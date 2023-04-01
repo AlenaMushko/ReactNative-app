@@ -59,8 +59,8 @@ export default function DefaultScreensPosts() {
   // console.log('====================================');
   // console.log("post Coment", post[0]);
   const selectCurrentUser = (state) => state.auth;
-  const { login, email } = useSelector(selectCurrentUser);
-
+  const { login, email, userPhoto } = useSelector(selectCurrentUser);
+  
   const handleSignOut = () => {
     dispatch(authSignOutUser());
   };
@@ -91,7 +91,7 @@ export default function DefaultScreensPosts() {
           <View>
             <Image
               style={styles.imgUser}
-              source={require("../../assets/img/user.png")}
+              source={{ uri:userPhoto }}
             ></Image>
           </View>
             <View>
