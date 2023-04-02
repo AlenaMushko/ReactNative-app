@@ -11,24 +11,35 @@ import {
 } from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useDispatch, useSelector } from "react-redux";
-import EvilIcons from "@expo/vector-icons/EvilIcons";
 import { Entypo } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import AddUserIcon from "../../assets/svg/addUserIcon";
 import Container from "../../Components/Container";
 import { authSignOutUser } from "../redux/auth/authOperations";
 import dataBase from "../../firebase/config";
+import { incrementLikes } from "../redux/auth/authSliceReducer";
 
 export default function ProfileScreen({ route }) {
-  const [likes, setLikes] = useState(0);
+  const [counterLikes, setCounterLikes] = useState(0);
   const [post, setPost] = useState([]);
   const [userPosts, setUserPosts] = useState([]);
+  const [allComments, setAllComments] = useState([]);
+
   const userId = useSelector((state) => state.auth.userId);
   const dispatch = useDispatch(); //створюємо портал
   const navigation = useNavigation();
 
-  const selectCurrentUser = (state) => state.auth;
-  const { login, email, userPhoto } = useSelector(selectCurrentUser);
+  useEffect(() => {
+    const getLikes = async () => {
+      const likes = await AsyncStorage.getItem("likes");
+      if (likes) {
+        dispatch(incrementLikes(Number(likes)));
+        setCounterLikes(Number(likes));
+      }
+    };
+    getLikes();
+  }, [dispatch]);
 
   useEffect(() => {
     if (route.params) {
@@ -37,8 +48,45 @@ export default function ProfileScreen({ route }) {
   }, [route.params]);
 
   useEffect(() => {
+    getAllPost();
     getUserPosts();
   }, []);
+//==========================================================
+  const getAllPost = async () => {
+    const postRef = await dataBase
+      .firestore()
+      .collection("posts")
+      .onSnapshot((data) => {
+        const posts = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+        setPost(posts);
+
+        posts.forEach((post) => {
+          dataBase
+            .firestore()
+            .collection("posts")
+            .doc(post.id)
+            .collection("comments")
+            .onSnapshot((data) => {
+              // update the comments count for the current post
+              const comments = data.docs.map((doc) => ({ ...doc.data() }));
+              setAllComments((prev) => ({
+                ...prev,
+                [post.id]: comments.length, // store the comments count by post ID
+              }));
+            });
+        });
+      });
+  };
+//======================================
+
+  const handleCalculateLikes = () => {
+    const newLikes = counterLikes + 1;
+    AsyncStorage.setItem("likes", String(newLikes));
+    setCounterLikes(newLikes);
+  };
+
+  const selectCurrentUser = (state) => state.auth;
+  const { login, email, userPhoto } = useSelector(selectCurrentUser);
 
   const handleSignOut = () => {
     dispatch(authSignOutUser());
@@ -54,10 +102,6 @@ export default function ProfileScreen({ route }) {
       );
   };
 
-  const handleCalculateLikes = () => {
-    setLikes(likes + 1);
-  };
-
   return (
     <Container>
       <ImageBackground
@@ -66,7 +110,7 @@ export default function ProfileScreen({ route }) {
       >
         <View style={styles.box}>
           <View style={{ alignItems: "center" }}>
-            <View style={styles.userPhoto}>
+            <View style={{ ...styles.userPhoto, borderRadius: 16 }}>
               <ImageBackground style={styles.imgBg} source={{ uri: userPhoto }}>
                 <AddUserIcon
                   style={styles.addPhoto}
@@ -116,7 +160,7 @@ export default function ProfileScreen({ route }) {
                           ...styles.postNumberComment,
                         }}
                       >
-                        0
+                        {allComments[id] || 0}
                       </Text>
                     </View>
 
@@ -130,7 +174,7 @@ export default function ProfileScreen({ route }) {
                           ...styles.postNumberComment,
                         }}
                       >
-                        {likes}
+                        {counterLikes}
                       </Text>
                     </View>
 
