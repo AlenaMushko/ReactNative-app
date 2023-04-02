@@ -83,8 +83,8 @@ export default function DefaultScreensPosts() {
       </View>
       <View style={{ paddingHorizontal: 16 }}>
         <View style={styles.user}>
-          <View>
-            <Image style={styles.imgUser} source={{ uri: userPhoto }}></Image>
+          <View state={{  borderRadius:16,}}>
+            <Image style={{...styles.imgUser, borderRadius:16}} source={{ uri: userPhoto }}></Image>
           </View>
           <View>
             <Text style={styles.title}>{login}</Text>
@@ -181,6 +181,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     marginRight: 8,
+    borderRadius:16,
   },
   nameUser: {
     fontFamily: "Roboto_Bold",

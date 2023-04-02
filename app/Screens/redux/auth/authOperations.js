@@ -60,7 +60,6 @@ const authStateChangeUser = () => async (dispatch, getState) => {
           email: user.email,
           userPhoto: user.photoURL,
         };
-
         dispatch(authStateChange({ stateChange: true })); //якщо є зарєєстрований користувач, то автоматично входим
         dispatch(updateUserProfile(userUpdateProfile));
       }

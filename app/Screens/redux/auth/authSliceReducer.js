@@ -6,6 +6,7 @@ const initialState = {
   email: null,
   userPhoto: null,
   stateChange: false,
+  likes:0,
 };
 
 export const authSlice = createSlice({
@@ -29,13 +30,18 @@ export const authSlice = createSlice({
       email: null,
       userPhoto: null,
       stateChange: false,
+      likes:0,
     }),
-  },
+    incrementLikes:(state, { payload })=>({
+      ...state,
+      likes: payload.likes,
+  }),
+},
 });
 
 export const userSelector = (state) => state.auth;
 // Action creators are generated for each case reducer function
-export const { updateUserProfile, authStateChange, authSignOut } =
+export const { updateUserProfile, authStateChange, authSignOut , incrementLikes} =
   authSlice.actions;
 
 export const authReducer = authSlice.reducer;
