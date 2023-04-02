@@ -19,48 +19,43 @@ import { useDispatch, useSelector } from "react-redux";
 
 export default function DefaultScreensPosts() {
   const [post, setPost] = useState([]);
+  const [allComments, setAllComments] = useState([]);
   const navigation = useNavigation();
   const dispatch = useDispatch(); //створюємо портал
-
-  //=========================================
-  const [allComments, setAllComments] = useState([]);
-
-  useEffect(() => {
-    getAllComments();
-  }, []);
-
-  const getAllComments = async () => {
-    const AllComments = dataBase
-      .firestore()
-      // .collection("posts")
-      // .doc(postId)
-      .collection("comments")
-      .onSnapshot((data) =>
-        setAllComments(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-      );
-  };
-
-  // console.log('====================================');
-  // console.log("allComments", allComments.length);
-
-  //=========================================
-  const getAllPost = async () => {
-    const postRef = await dataBase
-      .firestore()
-      .collection("posts")
-      .onSnapshot((data) =>
-        setPost(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-      );
-  };
 
   useEffect(() => {
     getAllPost();
   }, []);
-  // console.log('====================================');
-  // console.log("post Coment", post[0]);
+
+  const getAllPost = async () => {
+    const postRef = await dataBase
+      .firestore()
+      .collection("posts")
+      .onSnapshot((data) => {
+        const posts = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+        setPost(posts);
+
+        posts.forEach((post) => {
+          dataBase
+            .firestore()
+            .collection("posts")
+            .doc(post.id)
+            .collection("comments")
+            .onSnapshot((data) => {
+              // update the comments count for the current post
+              const comments = data.docs.map((doc) => ({ ...doc.data() }));
+              setAllComments((prev) => ({
+                ...prev,
+                [post.id]: comments.length, // store the comments count by post ID
+              }));
+            });
+        });
+      });
+  };
+
   const selectCurrentUser = (state) => state.auth;
   const { login, email, userPhoto } = useSelector(selectCurrentUser);
-  
+
   const handleSignOut = () => {
     dispatch(authSignOutUser());
   };
@@ -89,15 +84,12 @@ export default function DefaultScreensPosts() {
       <View style={{ paddingHorizontal: 16 }}>
         <View style={styles.user}>
           <View>
-            <Image
-              style={styles.imgUser}
-              source={{ uri:userPhoto }}
-            ></Image>
+            <Image style={styles.imgUser} source={{ uri: userPhoto }}></Image>
           </View>
-            <View>
-              <Text style={styles.title}>{login}</Text>
-              <Text style={styles.title}>{email}</Text>
-            </View>
+          <View>
+            <Text style={styles.title}>{login}</Text>
+            <Text style={styles.title}>{email}</Text>
+          </View>
         </View>
       </View>
       <SafeAreaView style={styles.postMap}>
@@ -125,10 +117,9 @@ export default function DefaultScreensPosts() {
                         ...styles.postNumberComment,
                       }}
                     >
-                      0
+                      {allComments[id] || 0}
                     </Text>
                   </View>
-
                   <View style={styles.geolocation}>
                     <TouchableOpacity
                       onPress={() => {

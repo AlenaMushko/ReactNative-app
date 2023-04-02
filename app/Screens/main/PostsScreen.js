@@ -8,14 +8,13 @@ import MapScreen from "../nestedScreen/MapScreen";
 const NestedScreens = createStackNavigator();
 
 export default function PostsScreen({ route }) {
-
   return (
     <NestedScreens.Navigator
-    screenOptions={({ route }) => ({
-      tabBarShowLabel: false,
-      headerShown: false,
-    })}
-  >
+      screenOptions={({ route }) => ({
+        tabBarShowLabel: false,
+        headerShown: false,
+      })}
+    >
       <NestedScreens.Screen
         name="DefaultScreensPosts"
         component={DefaultScreensPosts}
@@ -25,4 +24,3 @@ export default function PostsScreen({ route }) {
     </NestedScreens.Navigator>
   );
 }
-

@@ -18,9 +18,6 @@ const useRoute = (isAuth) => {
       </AuthStack.Navigator>
     );
   }
-  return (
-   <Home/>
-  );
+  return <Home />;
 };
 export default useRoute;
-

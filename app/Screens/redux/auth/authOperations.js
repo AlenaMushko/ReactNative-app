@@ -18,7 +18,7 @@ const authSignUpUser =
       const userUpdateProfile = {
         userId: updateUserSuccess.uid,
         login: updateUserSuccess.displayName,
-        email:updateUserSuccess.email,
+        email: updateUserSuccess.email,
         userPhoto: updateUserSuccess.photoURL,
       };
       dispatch(updateUserProfile(userUpdateProfile));
@@ -57,7 +57,7 @@ const authStateChangeUser = () => async (dispatch, getState) => {
         const userUpdateProfile = {
           userId: user.uid,
           login: user.displayName,
-          email:user.email,
+          email: user.email,
           userPhoto: user.photoURL,
         };
 
@@ -66,7 +66,6 @@ const authStateChangeUser = () => async (dispatch, getState) => {
       }
     });
   } catch (error) {
-    console.log('authStateChangeUser ===========================');
     console.log(error.message);
     console.log(error);
   }
@@ -74,11 +73,17 @@ const authStateChangeUser = () => async (dispatch, getState) => {
 
 const authGetState = async () => {
   try {
-    const snapshot = await dataBase.auth().getRedirectResult
+    const snapshot = await dataBase.auth().getRedirectResult;
     snapshot.forEach((doc) => console.log(`${doc.id} =>`, doc.data()));
   } catch (error) {
     console.log(error);
   }
 };
 
-export { authSignInUser, authSignOutUser, authSignUpUser, authStateChangeUser, authGetState };
+export {
+  authSignInUser,
+  authSignOutUser,
+  authSignUpUser,
+  authStateChangeUser,
+  authGetState,
+};

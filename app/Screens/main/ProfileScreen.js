@@ -12,16 +12,15 @@ import {
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useDispatch, useSelector } from "react-redux";
 import EvilIcons from "@expo/vector-icons/EvilIcons";
-import { Entypo } from '@expo/vector-icons';
+import { Entypo } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import AddUserIcon from "../../assets/svg/addUserIcon";
 import Container from "../../Components/Container";
 import { authSignOutUser } from "../redux/auth/authOperations";
 import dataBase from "../../firebase/config";
 
-
 export default function ProfileScreen({ route }) {
-  const[likes, setLikes]= useState(0);
+  const [likes, setLikes] = useState(0);
   const [post, setPost] = useState([]);
   const [userPosts, setUserPosts] = useState([]);
   const userId = useSelector((state) => state.auth.userId);
@@ -29,7 +28,7 @@ export default function ProfileScreen({ route }) {
   const navigation = useNavigation();
 
   const selectCurrentUser = (state) => state.auth;
-  const { login, email, userPhoto  } = useSelector(selectCurrentUser);
+  const { login, email, userPhoto } = useSelector(selectCurrentUser);
 
   useEffect(() => {
     if (route.params) {
@@ -55,8 +54,8 @@ export default function ProfileScreen({ route }) {
       );
   };
 
-  const handleCalculateLikes = () =>{
-    setLikes(likes + 1)
+  const handleCalculateLikes = () => {
+    setLikes(likes + 1);
   };
 
   return (
@@ -66,96 +65,95 @@ export default function ProfileScreen({ route }) {
         source={require("../../assets/img/BGbgMountains.png")}
       >
         <View style={styles.box}>
-          <View style={{  alignItems: "center",}}>
-           <View style={styles.userPhoto}>
-            <ImageBackground
-              style={styles.imgBg}
-              source={{ uri:userPhoto }}
-            >
-              <AddUserIcon
-                style={styles.addPhoto}
-                fill={"#E8E8E8"}
-                stroke={"#E8E8E8"}
+          <View style={{ alignItems: "center" }}>
+            <View style={styles.userPhoto}>
+              <ImageBackground style={styles.imgBg} source={{ uri: userPhoto }}>
+                <AddUserIcon
+                  style={styles.addPhoto}
+                  fill={"#E8E8E8"}
+                  stroke={"#E8E8E8"}
+                />
+              </ImageBackground>
+            </View>
+
+            <View style={styles.logoutBtn}>
+              <AntDesign.Button
+                name="logout"
+                size={24}
+                color={"#BDBDBD"}
+                backgroundColor={"transparent"}
+                header={20}
+                onPress={handleSignOut}
               />
-            </ImageBackground>
+            </View>
+            <Text style={styles.title}>{login}</Text>
           </View>
+          <SafeAreaView style={styles.postMap}>
+            <FlatList
+              data={userPosts}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={({
+                item: { photoInfo, location, photo, userId },
+              }) => (
+                <View style={{ paddingTop: 32 }}>
+                  <Image source={{ uri: photo }} style={styles.postImage} />
+                  <Text style={styles.postName}>{photoInfo.name}</Text>
 
-          <View style={styles.logoutBtn}>
-            <AntDesign.Button
-              name="logout"
-              size={24}
-              color={"#BDBDBD"}
-              backgroundColor={"transparent"}
-              header={20}
-              onPress={handleSignOut}
-            />
-          </View>
-          <Text style={styles.title}>{login}</Text>  
-          </View>
-        <SafeAreaView style={styles.postMap}>
-          <FlatList
-            data={userPosts}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={({ item: { photoInfo, location, photo, userId} }) => (
-              <View style={{ paddingTop: 32 }}>
-                <Image source={{ uri: photo }} style={styles.postImage} />
-                <Text style={styles.postName}>{photoInfo.name}</Text>
+                  <View style={styles.postWrap}>
+                    <View style={styles.postComment}>
+                      <TouchableOpacity
+                        onPress={() => {
+                          navigation.navigate("CommentsScreen", {
+                            postId: userId,
+                          });
+                        }}
+                      >
+                        <Entypo name="message" size={24} color="#FF6C00" />
+                      </TouchableOpacity>
+                      <Text
+                        style={{
+                          ...styles.postText,
+                          ...styles.postNumberComment,
+                        }}
+                      >
+                        0
+                      </Text>
+                    </View>
 
-                <View style={styles.postWrap}>
-                  <View style={styles.postComment}>
-                    <TouchableOpacity
-                      onPress={() => {
-                        navigation.navigate("CommentsScreen", { postId:userId });
-                      }}
-                    >
-                      <Entypo name="message" size={24} color="#FF6C00" />
-                    </TouchableOpacity>
-                    <Text
-                      style={{
-                        ...styles.postText,
-                        ...styles.postNumberComment,
-                      }}
-                    >
-                      0
-                    </Text>
-                  </View>
+                    <View style={{ ...styles.postComment, marginLeft: 27 }}>
+                      <TouchableOpacity onPress={handleCalculateLikes}>
+                        <AntDesign name="like1" size={24} color="#FF6C00" />
+                      </TouchableOpacity>
+                      <Text
+                        style={{
+                          ...styles.postText,
+                          ...styles.postNumberComment,
+                        }}
+                      >
+                        {likes}
+                      </Text>
+                    </View>
 
-                  <View style={{...styles.postComment, marginLeft:27}}>
-                    <TouchableOpacity
-                      onPress={handleCalculateLikes}
-                    >
-                      <AntDesign name="like1" size={24} color="#FF6C00" />
-                    </TouchableOpacity>
-                    <Text
-                      style={{
-                        ...styles.postText,
-                        ...styles.postNumberComment,
-                      }}
-                    >
-                      {likes}
-                    </Text>
-                  </View>
-
-                  <View style={styles.geolocation}>
-                    <TouchableOpacity
-                      onPress={() =>
-                        navigation.navigate("MapScreen", { location })
-                      }
-                    >
-                      <Image
-                        style={styles.geolocationSvg}
-                        source={require("../../assets/img/geolocation.png")}
-                      ></Image>
-                    </TouchableOpacity>
-                    <Text style={{ ...styles.postText, ...styles.postPlace }}>
-                      {photoInfo.place}
-                    </Text>
+                    <View style={styles.geolocation}>
+                      <TouchableOpacity
+                        onPress={() =>
+                          navigation.navigate("MapScreen", { location })
+                        }
+                      >
+                        <Image
+                          style={styles.geolocationSvg}
+                          source={require("../../assets/img/geolocation.png")}
+                        ></Image>
+                      </TouchableOpacity>
+                      <Text style={{ ...styles.postText, ...styles.postPlace }}>
+                        {photoInfo.place}
+                      </Text>
+                    </View>
                   </View>
                 </View>
-              </View>
-            )}
-          />
-        </SafeAreaView>
+              )}
+            />
+          </SafeAreaView>
         </View>
       </ImageBackground>
     </Container>
@@ -176,7 +174,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
-  
+
     //   justifyContent: "center",
     position: "relative",
     marginTop: 147,
@@ -206,7 +204,6 @@ const styles = StyleSheet.create({
     lineHeight: 35,
     marginTop: 92,
   },
-
 
   postMap: {
     flex: 1,
