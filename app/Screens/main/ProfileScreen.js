@@ -137,7 +137,7 @@ export default function ProfileScreen({ route }) {
               data={userPosts}
               keyExtractor={(item, index) => index.toString()}
               renderItem={({
-                item: { photoInfo, location, photo, userId },
+                item: { photoInfo, location, photo, userId, id },
               }) => (
                 <View style={{ paddingTop: 32 }}>
                   <Image source={{ uri: photo }} style={styles.postImage} />
