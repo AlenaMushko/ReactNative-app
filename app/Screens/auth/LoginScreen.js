@@ -52,8 +52,6 @@ export default function LoginScreen() {
     navigation.navigate("registration");
   };
 
-
-
   const handleSubmit = async () => {
     const { email, password } = state;
 
@@ -71,7 +69,9 @@ export default function LoginScreen() {
       setState(initialState); // скидаємо форму
       setDisabledBtn(true);
     } else {
-      setErrorMessage("  Email must contain @, Password must contain only numbers, and have length from 6 to 15");
+      setErrorMessage(
+        "  Email must contain @, Password must contain only numbers, and have length from 6 to 15"
+      );
     }
   };
 
@@ -143,8 +143,8 @@ export default function LoginScreen() {
               {!isActive && (
                 <View>
                   {errorMessage ? (
-              <Text style={{color:"#ff0000"}}>{errorMessage}</Text>
-            ) : null}
+                    <Text style={{ color: "#ff0000" }}>{errorMessage}</Text>
+                  ) : null}
                   <Button
                     onSubmit={handleSubmit}
                     text="Log In"

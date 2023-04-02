@@ -37,8 +37,8 @@ export default function CommentsScreen({ route }) {
     getUserPosts();
   }, []);
 
-    const getUserPosts = async () => {
-    await dataBase
+  const getUserPosts = async () => {
+    const ccc = await dataBase
       .firestore()
       .collection("posts")
       .doc(postId)
@@ -102,15 +102,13 @@ export default function CommentsScreen({ route }) {
     if (newComment.length < 3) {
       setErrorMessage("Text must be at least 3 characters long.");
     } else {
-      setErrorMessage("")
+      setErrorMessage("");
       setShowAlert(true);
       createComment();
       Keyboard.dismiss();
       setNewComment("");
     }
   };
-  // console.log('====================================');
-  // console.log("allComments", allComments.length);
 
   return (
     <Container>
@@ -123,7 +121,7 @@ export default function CommentsScreen({ route }) {
             color={"#BDBDBD"}
             backgroundColor={"transparent"}
             header={20}
-            onPress={() =>  navigation.goBack()}
+            onPress={() => navigation.goBack()}
           />
           <Text style={styles.textHeader}>Posts</Text>
         </View>
@@ -179,7 +177,7 @@ export default function CommentsScreen({ route }) {
             </View>
             {showAlert && <Text>Comment is created</Text>}
             {errorMessage ? (
-              <Text style={{color:"#ff0000"}}>{errorMessage}</Text>
+              <Text style={{ color: "#ff0000" }}>{errorMessage}</Text>
             ) : null}
           </View>
         </TouchableWithoutFeedback>
