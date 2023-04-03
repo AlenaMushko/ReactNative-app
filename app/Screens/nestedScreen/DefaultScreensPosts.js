@@ -9,6 +9,7 @@ import {
   SafeAreaView,
   Alert,
 } from "react-native";
+import AnimatedLoader from 'react-native-animated-loader';
 import AntDesign from "@expo/vector-icons/AntDesign";
 import EvilIcons from "@expo/vector-icons/EvilIcons";
 import { useNavigation } from "@react-navigation/native";
@@ -20,11 +21,16 @@ import { useDispatch, useSelector } from "react-redux";
 export default function DefaultScreensPosts() {
   const [post, setPost] = useState([]);
   const [allComments, setAllComments] = useState([]);
+  const [loading, setLoading] = useState(true);
+
   const navigation = useNavigation();
   const dispatch = useDispatch(); //створюємо портал
 
   useEffect(() => {
     getAllPost();
+    setInterval(() => {
+      setLoading(false);
+     }, 2000);
   }, []);
 
   const getAllPost = async () => {
@@ -92,7 +98,14 @@ export default function DefaultScreensPosts() {
           </View>
         </View>
       </View>
-      <SafeAreaView style={styles.postMap}>
+            
+    {loading ? ( <AnimatedLoader
+      visible={loading}
+      overlayColor="rgba(255,255,255,0.75)"
+      animationStyle={styles.lottie}
+      speed={1}>
+      <Text>loading...</Text>
+    </AnimatedLoader>):(<SafeAreaView style={styles.postMap}>
         {post && (
           <FlatList
             data={post}
@@ -141,7 +154,8 @@ export default function DefaultScreensPosts() {
             )}
           />
         )}
-      </SafeAreaView>
+      </SafeAreaView>)}
+      
     </Container>
   );
 }
@@ -157,6 +171,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderBottomWidth: 1,
     borderBottomColor: "#BDBDBD",
+  },
+  lottie: {
+    width: 100,
+    height: 100,
   },
   title: {
     fontFamily: "Roboto_Medium",
