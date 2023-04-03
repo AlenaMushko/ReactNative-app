@@ -9,6 +9,7 @@ import {
   FlatList,
   TouchableOpacity,
 } from "react-native";
+import AnimatedLoader from 'react-native-animated-loader';
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useDispatch, useSelector } from "react-redux";
 import { Entypo } from "@expo/vector-icons";
@@ -25,6 +26,7 @@ export default function ProfileScreen({ route }) {
   const [post, setPost] = useState([]);
   const [userPosts, setUserPosts] = useState([]);
   const [allComments, setAllComments] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const userId = useSelector((state) => state.auth.userId);
   const dispatch = useDispatch(); //створюємо портал
@@ -50,6 +52,9 @@ export default function ProfileScreen({ route }) {
   useEffect(() => {
     getAllPost();
     getUserPosts();
+    setInterval(() => {
+      setLoading(false);
+     }, 2000);
   }, []);
 //==========================================================
   const getAllPost = async () => {
@@ -110,16 +115,14 @@ export default function ProfileScreen({ route }) {
       >
         <View style={styles.box}>
           <View style={{ alignItems: "center" }}>
-            <View style={{ ...styles.userPhoto, borderRadius: 16 }}>
-              <ImageBackground style={styles.imgBg} source={{ uri: userPhoto }}>
+            <View style={styles.userPhoto}>
+              <Image style={styles.imgBg} source={{ uri: userPhoto }} />
                 <AddUserIcon
                   style={styles.addPhoto}
                   fill={"#E8E8E8"}
                   stroke={"#E8E8E8"}
                 />
-              </ImageBackground>
             </View>
-
             <View style={styles.logoutBtn}>
               <AntDesign.Button
                 name="logout"
@@ -132,72 +135,82 @@ export default function ProfileScreen({ route }) {
             </View>
             <Text style={styles.title}>{login}</Text>
           </View>
+          {loading ? ( <AnimatedLoader
+      visible={loading}
+      overlayColor="rgba(255,255,255,0.75)"
+      animationStyle={styles.lottie}
+      speed={1}>
+      <Text>loading...</Text>
+    </AnimatedLoader>):(
           <SafeAreaView style={styles.postMap}>
-            <FlatList
-              data={userPosts}
-              keyExtractor={(item, index) => index.toString()}
-              renderItem={({
-                item: { photoInfo, location, photo, userId, id },
-              }) => (
-                <View style={{ paddingTop: 32 }}>
-                  <Image source={{ uri: photo }} style={styles.postImage} />
-                  <Text style={styles.postName}>{photoInfo.name}</Text>
+          <FlatList
+            data={userPosts}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({
+              item: { photoInfo, location, photo, userId, id },
+            }) => (
+              <View style={{ paddingTop: 32 }}>
+                <Image source={{ uri: photo }} style={styles.postImage} />
+                <Text style={styles.postName}>{photoInfo.name}</Text>
 
-                  <View style={styles.postWrap}>
-                    <View style={styles.postComment}>
-                      <TouchableOpacity
-                        onPress={() => {
-                          navigation.navigate("CommentsScreen", {
-                            postId: userId,
-                          });
-                        }}
-                      >
-                        <Entypo name="message" size={24} color="#FF6C00" />
-                      </TouchableOpacity>
-                      <Text
-                        style={{
-                          ...styles.postText,
-                          ...styles.postNumberComment,
-                        }}
-                      >
-                        {allComments[id] || 0}
-                      </Text>
-                    </View>
+                <View style={styles.postWrap}>
+                  <View style={styles.postComment}>
+                    <TouchableOpacity
+                      onPress={() => {
+                        navigation.navigate("CommentsScreen", {
+                          postId: userId,
+                        });
+                      }}
+                    >
+                      <Entypo name="message" size={24} color="#FF6C00" />
+                    </TouchableOpacity>
+                    <Text
+                      style={{
+                        ...styles.postText,
+                        ...styles.postNumberComment,
+                      }}
+                    >
+                      {allComments[id] || 0}
+                    </Text>
+                  </View>
 
-                    <View style={{ ...styles.postComment, marginLeft: 27 }}>
-                      <TouchableOpacity onPress={handleCalculateLikes}>
-                        <AntDesign name="like1" size={24} color="#FF6C00" />
-                      </TouchableOpacity>
-                      <Text
-                        style={{
-                          ...styles.postText,
-                          ...styles.postNumberComment,
-                        }}
-                      >
-                        {counterLikes}
-                      </Text>
-                    </View>
+                  <View style={{ ...styles.postComment, marginLeft: 27 }}>
+                    <TouchableOpacity onPress={handleCalculateLikes}>
+                      <AntDesign name="like1" size={24} color="#FF6C00" />
+                    </TouchableOpacity>
+                    <Text
+                      style={{
+                        ...styles.postText,
+                        ...styles.postNumberComment,
+                      }}
+                    >
+                      {counterLikes}
+                    </Text>
+                  </View>
 
-                    <View style={styles.geolocation}>
-                      <TouchableOpacity
-                        onPress={() =>
-                          navigation.navigate("MapScreen", { location })
-                        }
-                      >
-                        <Image
-                          style={styles.geolocationSvg}
-                          source={require("../../assets/img/geolocation.png")}
-                        ></Image>
-                      </TouchableOpacity>
-                      <Text style={{ ...styles.postText, ...styles.postPlace }}>
-                        {photoInfo.place}
-                      </Text>
-                    </View>
+                  <View style={styles.geolocation}>
+                    <TouchableOpacity
+                      onPress={() =>
+                        navigation.navigate("MapScreen", { location })
+                      }
+                    >
+                      <Image
+                        style={styles.geolocationSvg}
+                        source={require("../../assets/img/geolocation.png")}
+                      ></Image>
+                    </TouchableOpacity>
+                    <Text style={{ ...styles.postText, ...styles.postPlace }}>
+                      {photoInfo.place}
+                    </Text>
                   </View>
                 </View>
-              )}
-            />
-          </SafeAreaView>
+              </View>
+            )}
+          />
+        </SafeAreaView>
+    )}
+
+
         </View>
       </ImageBackground>
     </Container>
@@ -210,6 +223,10 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
     alignItems: "center",
     justifyContent: "flex-end",
+  },
+  lottie: {
+    width: 100,
+    height: 100,
   },
   box: {
     flex: 1,
